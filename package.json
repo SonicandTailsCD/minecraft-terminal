@@ -59,6 +59,7 @@
 		"vec3": "^0.1.7"
 	},
 	"devDependencies": {
-		"@types/node": "^18.11.18"
+		"@types/node": "^18.11.18",
+		"eslint": "^8.32.0"
 	}
 }
