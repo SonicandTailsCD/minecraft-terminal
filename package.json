@@ -30,6 +30,7 @@
 	"author": {
 		"name": "Joe.C"
 	},
+	"type": "commonjs",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/MC-Terminal/minecraft-terminal.git"
@@ -38,28 +39,55 @@
 		"access": "public"
 	},
 	"bin": {
-		"mc-term": "./src/index.js"
+		"mc-term": "./dist/index.js"
 	},
-	"main": "./src/index.js",
+	"scripts": {
+		"build": "tsc && pkg . --compress Brotli && node ./scripts/build",
+		"pkg": "tsc; pkg . --compress Brotli"
+	},
+	"pkg": {
+		"scripts": [
+			"node_modules/axios/dist/node/axios.cjs",
+			"node_modules/vm2/lib/setup-sandbox.js",
+			"dist/builtin_plugins/*"
+		],
+		"assets": [],
+		"targets": [
+			"node18-win-x64"
+		],
+		"outputPath": "builds",
+		"compress": "Brotli"
+	},
+	"main": "./dist/index.js",
 	"dependencies": {
 		"@iarna/toml": "^3.0.0",
 		"@zuzak/owo": "^1.18.0",
-		"axios": "^1.2.2",
+		"axios": "^1.2.5",
 		"easy-ansi": "^1.2.4",
 		"merge": "^2.1.1",
-		"mineflayer": "^4.6.0",
+		"minecraft-data": "^3.25.2",
+		"minecraft-protocol": "^1.40.2",
+		"mineflayer": "4.7.0",
 		"mineflayer-maps": "^1.1.2",
 		"mineflayer-pathfinder": "^2.4.2",
 		"pngjs": "^6.0.0",
-		"prismarine-chat": "^1.7.2",
+		"prismarine-block": "^1.16.3",
+		"prismarine-chat": "^1.8.0",
 		"prismarine-registry": "^1.6.0",
 		"prismarine-viewer": "^1.23.0",
 		"proxy-agent": "^5.0.0",
 		"socks": "^2.7.1",
+		"steveproxy": "github:SteveProxy/proxy",
 		"vec3": "^0.1.7"
 	},
 	"devDependencies": {
 		"@types/node": "^18.11.18",
+		"@angablue/exe": "^1.2.0",
+		"@typescript-eslint/eslint-plugin": "^5.49.0",
+		"@typescript-eslint/parser": "^5.49.0",
+		"pkg": "^5.8.0",
+		"resedit": "^1.7.0",
+		"typescript": "^4.9.4",
 		"eslint": "^8.32.0"
 	}
 }
