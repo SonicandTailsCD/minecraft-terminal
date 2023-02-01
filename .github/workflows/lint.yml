@@ -6,7 +6,9 @@ permissions:
   actions: write
   checks: write
   pull-requests: write
-  contents: read
+  contents: write
+  repository-projects: write
+  
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request_target' && github.head_ref || github.ref }}
