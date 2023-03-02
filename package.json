@@ -44,7 +44,7 @@
 	"scripts": {
 		"build": "tsc; pkg . --compress Brotli",
 		"pkg": "tsc; pkg . --compress Brotli",
-		"prepublishOnly": "eslint . --fix; tsc"
+		"prepublishOnly": "npm i; eslint . --fix; tsc; echo"
 	},
 	"pkg": {
 		"scripts": [
