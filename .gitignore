@@ -1,9 +1,11 @@
 /node_modules
 /[Bb]uild*
 ignore*
+/dist
 /.vscode
 /configPath.toml
 vscode-profile*
+_*
 
 # Logs
 logs

@@ -2,8 +2,6 @@
 
 # Minecraft Terminal
 
-[Documentation](https://github.com/MC-Terminal/minecraft-terminal/wiki/Home) | [Download](#downloads) | [Configuration](https://github.com/MC-Terminal/minecraft-terminal/wiki/Configuration) | [Usage](https://github.com/MC-Terminal/minecraft-terminal/wiki/Usage)
-
 </div>
 
 <div align="center">
@@ -12,39 +10,29 @@
 
 </div>
 
-Minecraft Terminal is a lightweight TUI client for Minecraft Java edition that allows you to play Minecraft in the terminal and configure bots.
+Minecraft Terminal is a TUI client for Minecraft Java edition, which lets you play the game and set up bots directly in the terminal.
 
 ## Downloads
 
-### Install with NPM (Recommended)
+### Install with NPM
 
 ```bash
 $ npm i -g mc-term
 $ mc-term
 ```
 
-### Clone git repo
-
-```bash
-$ git clone https://github.com/MC-Terminal/minecraft-terminal.git
-$ cd minecraft-terminal
-$ npm install
-$ node .
-```
-
 ## Usage
 
 * [Full Documentation](https://github.com/MC-Terminal/minecraft-terminal/wiki)
-* [Download](#downloads)
 * [Configuration](https://github.com/MC-Terminal/minecraft-terminal/wiki/Configuration)
 * [Usage](https://github.com/MC-Terminal/minecraft-terminal/wiki/Usage)
 
 ## Getting help
 
-Check out the [README](https://github.com/MC-Terminal/minecraft-terminal#readme) and existing [Discussions](https://github.com/MC-Terminal/minecraft-terminal/discussions): Maybe your question is answered there. If not, please open a [New Discussion](https://github.com/MC-Terminal/minecraft-terminal/discussions/new) and ask your question. If you find a bug, please report it in the [Issue tracker](https://github.com/MC-Terminal/minecraft-terminal/issues).
+If you have any questions or need assistance, please refer to the [README](https://github.com/MC-Terminal/minecraft-terminal#readme) and existing [Discussions](https://github.com/MC-Terminal/minecraft-terminal/discussions) to see if your question has already been answered. If not, please open a [New Discussion](https://github.com/MC-Terminal/minecraft-terminal/discussions/new) and ask your question. If you find a bug, please report it in the [Issue Tracker](https://github.com/MC-Terminal/minecraft-terminal/issues).
 
 ## Contribution
 
-If you'd like to contribute to Minecraft Terminal, great, just fork the repository and submit a pull request on the _Master_ branch.
+If you would like to contribute to Minecraft Terminal, please fork the repository and submit a pull request to the _Master_ branch.
 
 [![Alt](https://repobeats.axiom.co/api/embed/ca7a84ac45ec125429b40b0672e005c4042f9108.svg "Repobeats analytics")](https://github.com/MC-Terminal/minecraft-terminal/graphs/contributors)

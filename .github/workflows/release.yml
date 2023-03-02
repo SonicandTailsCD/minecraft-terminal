@@ -1,0 +1,32 @@
+name: "Release"
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - "master"
+
+jobs:
+  release:
+    name: "Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      # ...
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+      - name: "Build"
+        run: |
+          npm ci
+          npm run build
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: true
+          prerelease: false
+          files: |
+            builds/*

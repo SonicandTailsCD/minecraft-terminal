@@ -14,3 +14,4 @@
 /jest.config.js
 vscode-profile*
 ignore*
+/src
