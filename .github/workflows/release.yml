@@ -1,15 +1,13 @@
-name: "Release"
+name: "Tagged Release"
 
 on:
-  workflow_dispatch:
-
   push:
-    branches:
-      - "master"
+    tags:
+      - "*"
 
 jobs:
-  release:
-    name: "Release"
+  tagged-release:
+    name: "Tagged Release"
     runs-on: "ubuntu-latest"
 
     steps:
