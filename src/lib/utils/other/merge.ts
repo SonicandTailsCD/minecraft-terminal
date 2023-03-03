@@ -39,7 +39,7 @@ export function mergeObjects<T extends object, U extends object> (
 
 	const merged = mutate ? obj1 : { ...obj1 };
 	for (const key in obj2) {
-		if (!obj2.hasOwnProperty(key)) {
+		if (!Object.prototype.hasOwnProperty.call(obj2, key) || key === '__proto__' || key === 'constructor.prototype') {
 			continue;
 		}
 
