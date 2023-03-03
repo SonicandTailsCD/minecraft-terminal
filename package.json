@@ -79,7 +79,7 @@
 	},
 	"devDependencies": {
 		"@angablue/exe": "^1.2.0",
-		"@types/node": "^18.14.4",
+		"@types/node": "^18.14.5",
 		"@typescript-eslint/eslint-plugin": "^5.54.0",
 		"@typescript-eslint/parser": "^5.54.0",
 		"eslint": "^8.35.0",
