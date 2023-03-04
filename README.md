@@ -21,6 +21,10 @@ $ npm i -g mc-term
 $ mc-term
 ```
 
+### Download portable version from GitHub Releases
+
+Download the appropriate file for your operating system from [GitHub releases](https://github.com/MC-Terminal/minecraft-terminal/releases).
+
 ## Usage
 
 * [Full Documentation](https://github.com/MC-Terminal/minecraft-terminal/wiki)
