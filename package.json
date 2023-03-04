@@ -54,7 +54,7 @@
 		],
 		"assets": [],
 		"targets": [
-			"node18-linux-x64"
+			"node18-linux-x64", "node18-win-x64", "node18-macos-x64"
 		],
 		"outputPath": "builds",
 		"compress": "Brotli"
@@ -78,8 +78,7 @@
 		"vec3": "^0.1.8"
 	},
 	"devDependencies": {
-		"@angablue/exe": "^1.2.0",
-		"@types/node": "^18.14.5",
+		"@types/node": "^18.14.6",
 		"@typescript-eslint/eslint-plugin": "^5.54.0",
 		"@typescript-eslint/parser": "^5.54.0",
 		"eslint": "^8.35.0",
