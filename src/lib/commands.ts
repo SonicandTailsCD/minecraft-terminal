@@ -9,7 +9,7 @@ import { goals, pathfinder } from 'mineflayer-pathfinder';
 import { accessSync, readFileSync, constants } from 'fs';
 import { currentLang } from '../lang/translatable.js';
 import { distance, isNumber } from './utils/numbers';
-import { getQuotedStrings } from './utils/strings';
+import { getQuotedStrings, isString } from './utils/strings';
 import { tab } from './utils/strings/tabulate.js';
 import { Settings } from '../config/settings.js';
 import { type Window } from 'prismarine-windows';
@@ -126,6 +126,14 @@ class Commands {
 	public commands: Command = {};
 
 	public async interpret (str: string, options: { type?: string } = { type: undefined }): Promise<void> {
+		str = str.trim();
+		if (str === '') {
+			return;
+		}
+		if (str[0] === '#') {
+			return;
+		}
+
 		options = Object.assign({
 			type: undefined
 		}, options);
@@ -187,11 +195,12 @@ class Commands {
 			varSuffix: '%',
 			undefinedVar: 'undefined'
 		});
-		out = getQuotedStrings(out);
-		const t = out.shift();
-		out = parseStr.parseArr(out);
-		out.unshift(t);
-		return out as [string, ...Array<string | number | boolean | undefined | null>];
+
+		let outt = getQuotedStrings(out);
+		const t = outt.shift();
+		outt = parseStr.parseArr(outt);
+		outt.unshift(t);
+		return outt as [string, ...Array<string | number | boolean | undefined | null>];
 	}
 
 	private getCaseInsens<T> (key: string, obj: Record<unknown, T>): T {
@@ -204,6 +213,10 @@ class Commands {
 	}
 
 	private convertAlias (alias: string): string {
+		if (!alias) {
+			return;
+		}
+
 		const commandAliases = settings.settings.config.config.config.commands.commandAliases;
 		return this.getCaseInsens(alias, commandAliases) || alias.toLowerCase();
 	}
@@ -1026,7 +1039,7 @@ commands.commands.stopLook = () => {
 };
 
 const parseItemName = (item: Item): string => {
-	const name = item?.nbt?.value?.display?.value?.Name ??
+	const name: string = item?.nbt?.value?.display?.value?.Name ??
 		item?.displayName ??
 		item?.name ??
 		'unknown_name (bug)';
@@ -1036,7 +1049,7 @@ const parseItemName = (item: Item): string => {
 		out = new ChatMessage(JSON.parse(name)).toMotd();
 	} catch {}
 
-	return out;
+	return out?.value ?? out;
 };
 
 function renderWindow (window: Window, options?: { a: 1 }): string {
@@ -1119,8 +1132,8 @@ commands.commands.inventory = async (windowID: number | string, subCommand: stri
 			bot.closeWindow(bot.currentWindow);
 		};
 
-		const click = async (slotID: number, buttonIDName: string, buttonModeName: string): Promise<void> => {
-			if (checkIfSlotIsValid(slotID) || typeof buttonIDName !== 'string' || typeof buttonModeName !== 'string') {
+		const click = async (slotID: number, buttonIDName = 'left', buttonModeName: undefined): Promise<void> => {
+			if (checkIfSlotIsValid(slotID) || !isString(buttonIDName)) {
 				info(getCmdInfo('inventory.click'));
 				return;
 			}
@@ -1128,7 +1141,7 @@ commands.commands.inventory = async (windowID: number | string, subCommand: stri
 			const buttonID = buttonIDName === 'right' ? 1 : 0;
 			const buttonMode = 0; // Shift clicking is not supported in mineflayer
 
-			info(`${buttonModeName + buttonIDName} clicking slot ${String(slotID)} in window #${windowID}`);
+			info(`${buttonIDName} clicking slot ${String(slotID)} in window #${windowID}`);
 
 			await bot.clickWindow(slotID, buttonID, buttonMode);
 		};
