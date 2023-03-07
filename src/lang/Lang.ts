@@ -1,4 +1,12 @@
-import { type CommandLang } from '../types/CommandLang.js';
+export class CommandLang {
+	constructor (options?: Partial<CommandLang>) {
+		Object.assign(this, options);
+	}
+
+	description?: string;
+	usage?: string;
+	subCommands?: Record<string, CommandLang>;
+}
 
 export class Lang {
 	public readonly name: string = 'EN';
