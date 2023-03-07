@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 /* eslint-disable import/first */
-process.once('exit', () => {
-	process.stdout.write('\n');
-});
-
 import { _package } from './lib/helpers/package.js';
 process.title = _package.name;
 
@@ -59,6 +55,10 @@ overrideCred(settings);
 
 // Set uncaught exception message
 uncaughtExcep(settings);
+
+process.once('exit', () => {
+	process.stdout.write('\n');
+});
 
 void (
 	async () => {
