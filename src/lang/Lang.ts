@@ -211,7 +211,7 @@ export class Lang {
 					subCommands: {
 						click: {
 							description: 'Click a slot in a container',
-							usage: 'Usage: inventory.click <Slot>'
+							usage: 'Usage: inventory.click <Slot> <Button:left|right>'
 						},
 						swap: {
 							description: 'Swap two slots in a container',
