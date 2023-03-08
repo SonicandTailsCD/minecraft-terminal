@@ -280,6 +280,7 @@ export class PluginExports {
 	public warn = warn;
 	public error = error;
 	public success = success;
+	public currentLang = currentLang;
 }
 
 commands.commands.exit = () => {
