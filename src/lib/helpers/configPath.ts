@@ -1,9 +1,10 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { mainPath, srcPath } from './mainPath.js';
+import { srcPath } from './mainPath.js';
 import { homedir } from 'os';
 import { join } from 'path';
+import { _package } from './package.js';
 
-const defaultDir: string = process.platform === 'win32' ? join(mainPath, 'config') : join(homedir(), '.config', 'mc-term');
+const defaultDir: string = process.platform === 'win32' ? join(process.env.APPDATA ?? homedir(), _package.name) : join(homedir(), '.config', _package.name);
 
 /*
   Returns the file containing the config files' path's path
