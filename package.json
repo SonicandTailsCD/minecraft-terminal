@@ -43,7 +43,7 @@
 	},
 	"scripts": {
 		"build": "npm ci; eslint . --fix; tsc; echo",
-		"pkg": "npm run build; pkg . --compress Brotli",
+		"pkg": "npm run build; pkg . --compress Brotli --options='max-semi-space-size=128,max-old-space-size=300'",
 		"prepublishOnly": "npm run build"
 	},
 	"pkg": {
@@ -62,7 +62,6 @@
 	"main": "./dist/index.js",
 	"dependencies": {
 		"@iarna/toml": "^3.0.0",
-		"@zuzak/owo": "^1.18.0",
 		"axios": "^1.3.4",
 		"basic-chat-cli": "^0.1.5",
 		"easy-ansi": "^1.2.6",
@@ -72,6 +71,7 @@
 		"mineflayer": "4.8.1",
 		"mineflayer-maps": "^1.1.2",
 		"mineflayer-pathfinder": "^2.4.2",
+		"prismarine-viewer": "^1.24.0",
 		"pngjs": "^7.0.0",
 		"proxy-agent": "^5.0.0",
 		"socks": "^2.7.1",
@@ -94,7 +94,6 @@
 		"prismarine-block": "^1.16.3",
 		"prismarine-chat": "^1.8.0",
 		"prismarine-registry": "^1.7.0",
-		"prismarine-viewer": "^1.24.0",
 		"prismarine-windows": "^2.6.1",
 		"types-package-json": "^2.0.39"
 	}
