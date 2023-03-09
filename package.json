@@ -42,9 +42,9 @@
 		"mc-term": "./dist/index.js"
 	},
 	"scripts": {
-		"build": "tsc; pkg . --compress Brotli",
-		"pkg": "tsc; pkg . --compress Brotli",
-		"prepublishOnly": "npm i; eslint . --fix; tsc; echo"
+		"build": "npm ci; eslint . --fix; tsc; echo",
+		"pkg": "npm run build; pkg . --compress Brotli",
+		"prepublishOnly": "npm run build"
 	},
 	"pkg": {
 		"scripts": [
