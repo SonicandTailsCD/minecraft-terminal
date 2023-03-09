@@ -20,10 +20,12 @@ jobs:
       - name: "Build"
         run: |
           npm ci
-          npm run build
       - name: "Release to NPM"
         run: |
           npm publish
+      - name: "Package"
+        run: |
+          npm run build
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
