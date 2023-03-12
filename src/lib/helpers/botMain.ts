@@ -56,11 +56,9 @@ async function handleInput (input: string, commandPrefix = '.'): Promise<void> {
 		return;
 	}
 
-	if (commandPrefix !== '') {
-		if (input.charAt(0) === '.') {
-			await commands.commands.interpret(input.slice(1));
-			return;
-		}
+	if (commandPrefix !== '' && input.startsWith(commandPrefix)) {
+		await commands.commands.interpret(input.slice(1));
+		return;
 	}
 
 	bot.chat(input);
@@ -73,7 +71,7 @@ export async function botMain (): Promise<Bot> {
 
 	// Mineflayer bot creation options
 	const options: mineflayer.BotOptions = {
-		auth: settings.bot.cred.auth === '' ? 'offline' : settings.bot.cred.auth,
+		auth: settings.bot.cred.auth || 'offline',
 		username: settings.bot.cred.username,
 		password: settings.bot.cred.password,
 		host: settings.bot.cred.server,

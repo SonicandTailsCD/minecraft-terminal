@@ -125,39 +125,26 @@ class Commands {
 
 	public commands: Command = {};
 
-	public async interpret (str: string, options: { type?: string } = { type: undefined }): Promise<void> {
-		str = str.trim();
-		if (str === '') {
-			return;
-		}
-		if (str[0] === '#') {
-			return;
-		}
+	public async interpret (str: string, options: { type?: string } = {}): Promise<void> {
+		const trimmedStr = str.trim();
+		if (!trimmedStr || trimmedStr.startsWith('#')) return;
 
-		options = Object.assign({
-			type: undefined
-		}, options);
-
-		const interpretWOSemi = async (str: string): Promise<void> => {
-			const args = this.parseInput(str);
-			let command = args.shift();
-			command = this.convertAlias(command);
-			const func = this.getCaseInsens(command, this.commands);
+		const { type } = options;
+		const interpretLine = async (line: string): Promise<void> => {
+			const [command, ...args] = this.parseInput(line.trim());
+			const func = this.getCaseInsens(this.convertAlias(command), this.commands);
 
 			if (!func || reservedCommandNames.includes(command)) {
 				warn(currentLang.data.infoMessages.invalidCmd(command));
 				return;
 			}
 
-			if (
-				!settings.settings.config.config.config.commands.enableNonVanillaCMD &&
-			nonVanillaCommands.includes(command)
-			) {
+			if (!settings.settings.config.config.config.commands.enableNonVanillaCMD && nonVanillaCommands.includes(command)) {
 				warn(currentLang.data.infoMessages.nonVanillaCmd);
 				return;
 			}
 
-			if (options?.type !== 'script' && scriptOnlyCommands.includes(command)) {
+			if (type !== 'script' && scriptOnlyCommands.includes(command)) {
 				warn(currentLang.data.infoMessages.scriptOnlyCmd);
 				return;
 			}
@@ -165,22 +152,17 @@ class Commands {
 			await func(...args);
 		};
 
-		const lines = str.split(/\n|;;/);
+		const lines = trimmedStr.split(/[\n;]{2}/);
 		for (const line of lines) {
-			await interpretWOSemi(line);
+			await interpretLine(line);
 		}
 	}
 
 	public async runTasks (tasks: Record<Task['name'], Task['cmd']>): void {
-		const entries = Object.entries(tasks);
-		for (const [name, cmd] of entries) {
-			const times: 'on' | 'once' | undefined = name.match(/^[^_]+/)?.[0] as 'on' | 'once' | undefined;
-			if (times && ['on', 'once'].includes(times) && typeof cmd === 'string' && cmd !== '') {
-				const eventName = name.match(/(?<=_).+$/);
-				if (eventName == null) {
-					return;
-				}
-				bot[times](eventName[0] as keyof BotEvents, async () => {
+		for (const [name, cmd] of Object.entries(tasks)) {
+			const [times, eventName] = name.split('_');
+			if (['on', 'once'].includes(times) && typeof cmd === 'string' && cmd !== '' && eventName) {
+				bot[times as keyof BotEvents](eventName, async () => {
 					await commands.interpret(cmd);
 				});
 			}

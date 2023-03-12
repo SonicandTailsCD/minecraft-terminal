@@ -19,20 +19,10 @@ let botLookPriorityCache = {
 	* property.
 	*/
 export function getItems (window: Window, gt: number, lt: number): Array<typeof window.slots[0]> {
-	const items: Array<typeof window.slots[0]> = [];
-	for (let i = 0; i < window.slots.length; i++) {
-		const item = window.slots[i];
-		if (item) {
-			if ((lt && item.slot < lt) || (gt && item.slot > gt)) {
-				continue;
-			}
-			items.push(item);
-		}
-	}
-	return items;
+	return window.slots.filter(item => item && (!lt || item.slot >= lt) && (!gt || item.slot <= gt));
 }
 
-export const blockID2Face = [
+export const blockID2Face: ['down', 'up', 'south', 'north', 'east', 'west'] = [
 	'down',
 	'up',
 	'south',
@@ -64,7 +54,10 @@ export const blockFace2Vec = {
 	south: v([0, 0, -1])
 };
 
-export const blockID2Vec = [
+export const blockID2Vec: [
+	Vec3, Vec3, Vec3,
+	Vec3, Vec3, Vec3
+] = [
 	v([0, -1, 0]),
 	v([0, 1, 0]),
 	v([0, 0, -1]),
@@ -123,6 +116,20 @@ export async function digBlock (position: Vec3): Promise<Block> {
 // // a
 // }
 
+function getAdjacentBlocks (position: Vec3): Array<{ block: Block, face: number }> {
+	const adjacentBlocks = [];
+	for (let faceID = 0; faceID < blockID2Face.length; faceID++) {
+		const faceVec: Vec3 = blockFace2Vec[blockID2Face[faceID]];
+		const block = bot.blockAt(position.offset(faceVec.x, faceVec.y, faceVec.z));
+
+		if (block !== null) {
+			adjacentBlocks.push({ block, face: reverseFaceID(faceID) });
+		}
+	}
+
+	return adjacentBlocks;
+}
+
 /**
 	* The placeBlock function places a block next to the given position.
 	*
@@ -139,8 +146,7 @@ export async function placeBlock (position: Vec3): Promise<Block | null | undefi
 
 	// Get states to reset them later
 	const sneakState = bot.getControlState('sneak');
-	const yaw = bot.entity.yaw;
-	const pitch = bot.entity.pitch;
+	const { yaw, pitch } = bot.entity;
 	const done = async (): Promise<true> => {
 		await bot.look(yaw, pitch, true);
 		bot.setControlState('sneak', sneakState);
@@ -148,56 +154,32 @@ export async function placeBlock (position: Vec3): Promise<Block | null | undefi
 	};
 
 	// Get all valid blocks that are next to where we wanna place our block
-	const adjBlocks: Block[] = [];
-	for (let a = 0, b = 0; a < 6; a++) {
-		const face = blockID2Face[a];
-		const offset = blockFace2Vec[face as keyof object] as Vec3;
-		const adjBlockPos = position.offset(offset.x, offset.y, offset.z);
-		const adjBlock = bot.blockAt(adjBlockPos);
-
-		if ((adjBlock == null) || adjBlock.boundingBox === 'empty') {
-			continue;
-		}
-		adjBlocks[b] = adjBlock;
-		adjBlocks[b].supposedFace = reverseFaceID(a);
-		b++;
-	}
+	const adjBlocks = getAdjacentBlocks(position)
+		.filter(adjBlock => adjBlock?.block.boundingBox !== 'empty');
 
 	if (adjBlocks.length === 0) {
 		throw new Error('There are no valid blocks next to there');
 	}
 
-	for (let i = 0; i < adjBlocks.length; i++) {
-		const adjBlock = adjBlocks[i];
-
+	for (const { block: adjBlock, face: adjBlockFace } of adjBlocks) {
 		// Use an offset to look at the correct face of the block instead of its insides
-		let offset = blockID2Vec[adjBlock.supposedFace];
-		for (let a = 0, offKeys = Object.keys(offset); a < offKeys.length; a++) {
-			const key = offKeys[a];
-			let off = 0.5;
-			if (offset[key] < 0) {
-				off = 1;
-			}
-			if (offset[key] !== 1) {
-				switch (key) {
-					case 'x':
-						offset = offset.offset(off, 0, 0);
-						break;
-					case 'y':
-						offset = offset.offset(0, off, 0);
-						break;
-					case 'z':
-						offset = offset.offset(0, 0, off);
-						break;
+		let offset = blockID2Vec[adjBlockFace];
+		Object.entries(offset).forEach(([axis, value]) => {
+			const off = value < 0 ? 1 : 0.5;
+			if (value !== 1) {
+				switch (axis) {
+					case 'x': offset = offset.offset(off, 0, 0); break;
+					case 'y': offset = offset.offset(0, off, 0); break;
+					case 'z': offset = offset.offset(0, 0, off); break;
 				}
 			}
-		}
+		});
 
 		// Using this instead of rayCastToBlockFromEntity because it gives the face property
-		await bot.lookAt(adjBlock.position.offset(offset.x, offset.y, offset.z), true);
+		await bot.lookAt(adjBlock.position.plus(offset), true);
 		const blockRef = bot.blockAtCursor(4);
 
-		if (!((blockRef != null) && blockRef.face === adjBlock.supposedFace && distance(blockRef.position, adjBlock.position) === 0)) {
+		if (!blockRef || blockRef.face !== adjBlockFace || distance(blockRef.position, adjBlock.position) !== 0) {
 			continue;
 		}
 
@@ -214,7 +196,7 @@ export async function placeBlock (position: Vec3): Promise<Block | null | undefi
 
 		// Return the placed block
 		const placedBlock = bot.blockAt(adjBlock.position);
-		if (placedBlock.boundingBox === 'empty') {
+		if (placedBlock?.boundingBox === 'empty') {
 			return null;
 		}
 		return placedBlock;
@@ -234,7 +216,7 @@ export const directionToPitch = {
 };
 
 export async function look (pitch: number, yaw: number, force: boolean): Promise<void> {
-	//    markiplier
+	// markiplier
 	const multiplier = 19.09877648466666 * bot.physics.yawSpeed;
 	await bot.look(-(Number(yaw) + 180) / multiplier, -pitch / multiplier, force);
 }

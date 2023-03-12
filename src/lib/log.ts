@@ -1,7 +1,7 @@
 import { color } from 'easy-ansi';
 import { currentLang } from '../lang/translatable.js';
 import { type Settings } from '../config/settings.js';
-import { type Chat } from 'basic-chat-cli';
+import { type Chat, print as _print } from 'basic-chat-cli';
 
 let settings: Settings;
 let chat: Chat;
@@ -10,13 +10,17 @@ export const setup = (_chat = chat, _settings = settings): void => {
 	settings = _settings;
 };
 
+const print: typeof _print = (str, options) => {
+	chat?.print ? chat.print(str, options) : _print(str, options);
+};
+
 const padNewLines = (str: string, spacenum: number, prefix = ''): string => {
 	return str.replace(/\n/g, '\n' + prefix.padStart(spacenum + prefix.length, ' '));
 };
 
 export const info = (str: string, resetCursor = true): void => {
 	const coloredStr = str.replace(/%COLOR%/g, info.color);
-	chat.print(
+	print(
 		`${info.color}[${currentLang.data.logger.info}] ${padNewLines(coloredStr, 7, info.color) + color.reset}`,
 		{ resetCursor, clearLine: true }
 	);
@@ -25,7 +29,7 @@ info.color = color.reset + color.bold + color.rgb(130, 130, 200);
 
 export const warn = (str: string, resetCursor = true): void => {
 	const coloredStr = str.replace(/%COLOR%/g, warn.color);
-	chat.print(
+	print(
 		`${warn.color}[${currentLang.data.logger.warn}] ${padNewLines(coloredStr, 7, warn.color) + color.reset}`,
 		{ resetCursor, clearLine: true }
 	);
@@ -34,7 +38,7 @@ warn.color = color.reset + color.bold + color.rgb(255, 255, 85);
 
 export const error = (str: string, resetCursor = true): void => {
 	const coloredStr = str.replace(/%COLOR%/g, error.color);
-	chat.print(
+	print(
 		`${error.color}[${currentLang.data.logger.error}] ${padNewLines(coloredStr, 6, error.color) + color.reset}`,
 		{ resetCursor, clearLine: true }
 	);
@@ -52,7 +56,7 @@ export const debugError = (msg: string, resetCursor = true, err?: Error): void =
 
 export const success = (str: string, resetCursor = true): void => {
 	const coloredStr = str.replace(/%COLOR%/g, success.color);
-	chat.print(
+	print(
 		`${success.color}[${currentLang.data.logger.success}] ${padNewLines(coloredStr, 5, success.color)}` +
 			color.reset,
 		{ resetCursor, clearLine: true }
