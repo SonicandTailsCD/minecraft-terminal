@@ -76,7 +76,6 @@
 		"pngjs": "^7.0.0",
 		"prismarine-viewer": "^1.24.0",
 		"proxy-agent": "^5.0.0",
-		"shelljs": "^0.8.5",
 		"socks": "^2.7.1",
 		"vec3": "^0.1.8"
 	},
@@ -85,7 +84,7 @@
 		"@types/shelljs": "^0.8.11",
 		"@typescript-eslint/eslint-plugin": "^5.54.1",
 		"@typescript-eslint/parser": "^5.54.1",
-		"eslint": "^8.35.0",
+		"eslint": "^8.36.0",
 		"eslint-config-standard": "^17.0.0",
 		"eslint-config-standard-with-typescript": "^34.0.0",
 		"eslint-plugin-import": "^2.27.5",
