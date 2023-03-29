@@ -46,24 +46,24 @@ export const face2BlockID = {
 };
 
 export const blockFace2Vec = {
-	west: v([1, 0, 0]),
-	up: v([0, 1, 0]),
-	north: v([0, 0, 1]),
-	east: v([-1, 0, 0]),
-	down: v([0, -1, 0]),
-	south: v([0, 0, -1])
+	west: v(1, 0, 0),
+	up: v(0, 1, 0),
+	north: v(0, 0, 1),
+	east: v(-1, 0, 0),
+	down: v(0, -1, 0),
+	south: v(0, 0, -1)
 };
 
 export const blockID2Vec: [
 	Vec3, Vec3, Vec3,
 	Vec3, Vec3, Vec3
 ] = [
-	v([0, -1, 0]),
-	v([0, 1, 0]),
-	v([0, 0, -1]),
-	v([0, 0, 1]),
-	v([-1, 0, 0]),
-	v([1, 0, 0])
+	v(0, -1, 0),
+	v(0, 1, 0),
+	v(0, 0, -1),
+	v(0, 0, 1),
+	v(-1, 0, 0),
+	v(1, 0, 0)
 ];
 
 /**
