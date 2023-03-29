@@ -107,9 +107,9 @@ export class Config {
 						}
 					},
 					pathfinder: {
-						thinkTimeout: 8000,
-						tickTimeout: 40,
-						searchRadius: -1,
+						thinkTimeout: 2000,
+						tickTimeout: 2,
+						searchRadius: 20,
 						enablePathShortcut: true,
 						LOSWhenPlacingBlocks: true
 					}

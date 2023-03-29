@@ -777,9 +777,7 @@ async function botSmartFollow (matchesStr, range): Promise<void> {
 		const goal = new goals.GoalFollow(entity, range);
 		try {
 			await bot.pathfinder.goto(goal, () => { console.log('dddd') });
-		} catch (e) {
-			const err = e as Error;
-			error('Could not follow the player.\n' + err.message, true, err);
+		} catch {
 			await sleep(1400);
 		}
 	}
