@@ -2,7 +2,6 @@
 
 import { parseStr, parseVar, matchEq, toLowerCaseArr } from './utils/other/utils.js';
 import { type Bot, type BotEvents, type BotOptions } from 'mineflayer';
-import { withPriority } from './utils/other/withPriority.js';
 import * as mcUtils from './utils/other/mineflayer-utils.js';
 import { parseCoords } from './utils/strings/parseCoords.js';
 import { goals, pathfinder } from 'mineflayer-pathfinder';
@@ -28,9 +27,7 @@ import * as ansi from 'easy-ansi';
 import { pointsInBetween } from './utils/other/pointsInBetween.js';
 import { type Block } from 'prismarine-block';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 let pRegistry = makeRegistry('1.12.2');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 let ChatMessage = makePrismChat(pRegistry);
 
 interface CommandEvents {
@@ -363,23 +360,25 @@ commands.commands.blocks = async (range, count, filter) => {
 	info('Count: ' + String(blockCount));
 };
 
-async function botDig (pos: Vec3, forceLook: boolean | 'ignore', type: 'auto' | 'raycast' | Vec3, silent: boolean): Promise<boolean> {
+async function botDig (pos: Vec3, forceLook: boolean | 'ignore', type: 'auto' | 'raycast' | Vec3, silent = true): Promise<boolean> {
 	if (commands.tmp.botDigging || commands.tmp.botLooking || commands.tmp.botAttacking) {
 		return;
 	}
 
 	const block = bot.blockAt(pos);
-	if ((block == null) || !block.diggable) {
+	if (block === null || !block.diggable) {
 		if (!silent) warn('Block is undiggable');
 		return false;
 	}
 
 	try {
-		await bot.dig(block, forceLook, type); return true;
+		await bot.dig(block, forceLook, type);
 	} catch (err) {
 		if (!silent) warn(currentLang.data.infoMessages.cantDigBlockAt(pos.x, pos.y, pos.z, err));
+		return false;
 	}
-	return false;
+
+	return true;
 }
 
 commands.commands.dig = async (x: number, y: number, z: number) => {
@@ -387,15 +386,19 @@ commands.commands.dig = async (x: number, y: number, z: number) => {
 		info(getCmdInfo('dig'));
 		return;
 	}
-	if (commands.tmp.botLooking || commands.tmp.botAttacking) {
+	if (commands.tmp.botDigging || commands.tmp.botLooking || commands.tmp.botAttacking) {
 		warn(currentLang.data.infoMessages.botLookingOrAttackingErr);
 		return true;
 	}
 
+	const botDigPromise = botDig(v(x, y, z), true, 'raycast');
 	commands.tmp.botLooking = true;
-	await botDig(v(x, y, z), true, 'raycast');
+	commands.tmp.botDigging = true;
+	if (await botDigPromise) {
+		success(`Dug block at ${x}, ${y}, ${z}`);
+	}
 	commands.tmp.botLooking = false;
-	success(`Dug block at ${x}, ${y}, ${z}`);
+	commands.tmp.botDigging = false;
 };
 
 commands.commands.stopDig = () => {
@@ -625,38 +628,17 @@ commands.commands.move = async (direction: string, distance: number) => {
 };
 
 async function botFollow (matchesStr, range): Promise<void> {
-	if (!matchesStr || !range) {
+	if (commands.tmp.botMoving) {
 		return;
 	}
-	const stopGoingForward = (): void => {
-		bot.setControlState('forward', false);
-	};
-	const goForward = (): void => {
-		bot.setControlState('forward', true);
-	};
-	const jump = async (): void => {
-		if (!bot.getControlState('jump')) {
-			bot.setControlState('jump', true);
-			await sleep(10);
-			bot.setControlState('jump', false);
-		}
-	};
 
+	// Save the initial used control states
 	const sprintState = bot.getControlState('sprint');
 	const jumpState = bot.getControlState('jump');
-	let cooldown = 0;
-	let botPos = bot.entity?.position;
-	bot.setControlState('sprint', true);
 
-	let oldBotPos = Object.assign({}, botPos);
-	let err = false;
+	commands.tmp.botMoving = true;
 	while (commands.tmp.botMoving) {
-		if ((Date.now() - cooldown) < 80) {
-			cooldown = Date.now();
-			await sleep(200);
-			stopGoingForward();
-			continue;
-		} else cooldown = Date.now();
+		await sleep(150);
 		const entity = bot.nearestEntity((entity) => {
 			try {
 				return matchEq(matchesStr, entity);
@@ -664,51 +646,15 @@ async function botFollow (matchesStr, range): Promise<void> {
 				if (!err) err = true;
 			}
 		});
-		if (err) {
-			commands.tmp.botMoving = false;
-			error('Invalid EntityMatches');
-			return;
-		}
-		if ((entity?.position) == null) {
-			await sleep(200);
-			stopGoingForward();
+
+		if (!entity) {
 			continue;
 		}
-		const playerHeight = entity.height || 1.518;
-		botPos = bot.entity?.position;
-		if (!botPos) {
-			await sleep(200);
-			stopGoingForward();
-			continue;
-		}
-		const distXZ = distance({ x: botPos.x, z: botPos.z }, { x: entity.position.x, z: entity.position.z });
-		// const distY = Math.abs(botPos.y - playerPos.y);
-		if (distXZ <= range) {
-			await sleep(150);
-			stopGoingForward();
-			continue;
-		}
-		// Makes the bot go in a straight line when possible
-		const playerBlockPos = v(
-			Math.floor(entity.position.x),
-			botPos.y,
-			Math.floor(entity.position.z)
-		).offset(
-			botPos.x - Math.floor(botPos.x),
-			playerHeight,
-			botPos.z - Math.floor(botPos.z)
-		);
-		await withPriority(10, 120, true, false, botLookPriorityCache, async () => {
-			await bot.lookAt(playerBlockPos, true);
-			goForward();
-			if (distance({ x: oldBotPos.x + oldBotPos.z }, { x: botPos.x + botPos.z }) < 0.001) {
-				jump();
-			}
-			oldBotPos = Object.assign({}, botPos);
-		});
-		await sleep(80);
+
+		await mcUtils.followEntityWithJump(entity, range);
 	}
-	stopGoingForward();
+
+	// Reset to initial states
 	bot.setControlState('sprint', sprintState);
 	bot.setControlState('jump', jumpState);
 }
@@ -730,12 +676,12 @@ commands.commands.follow = async (matchesStr: string, range: number) => {
 		info(getCmdInfo('follow'));
 		return;
 	}
-	commands.tmp.botMoving = true;
 	let unit;
 	if (range === 1) unit = 'block';
 	else unit = 'blocks';
 	success(`Following nearest entity if ${matchesStr} with a range of ${range} ${unit}`);
 	void botFollow(matchesStr, range);
+	commands.tmp.botMoving = true;
 };
 
 commands.commands.pathfind = async (X: number, ZOrY: number, Z?: number) => {
@@ -794,40 +740,31 @@ commands.commands.control = (control: 'up' | 'forward' | 'back' | 'left' | 'righ
 	if (['forward', 'back', 'left', 'right', 'jump', 'sprint', 'sneak'].includes(control) && typeof state === 'boolean') {
 		bot.setControlState(control, state);
 		success(`Set control state ${control} to ${String(state)}`);
-	} else if (control === 'clearall') {
+		return;
+	}
+
+	if (control === 'clearall') {
 		bot.clearControlStates();
 		success('Cleared all control states');
-	} else {
-		info(getCmdInfo('control'));
+		return;
 	}
+
+	info(getCmdInfo('control'));
 };
 
 async function botSmartFollow (matchesStr, range): Promise<void> {
 	if (!matchesStr || !range) {
 		return;
 	}
-	let cooldown = 0;
-	let goal;
-	range = range - 0.55;
-	let err = false;
+
+	matchEq(matchesStr, {});
+
 	while (commands.tmp.botMoving) {
-		if ((Date.now() - cooldown) < 80) {
-			cooldown = Date.now();
-			await sleep(200);
-			continue;
-		} else cooldown = Date.now();
 		const entity = bot.nearestEntity((entity) => {
 			try {
-				return matchEq(matchesStr, entity);
-			} catch {
-				if (!err) err = true;
-			}
+				return entity ? matchEq(matchesStr, entity) : false;
+			} catch {}
 		});
-		if (err) {
-			commands.tmp.botMoving = false;
-			error('Invalid EntityMatches');
-			return;
-		}
 		if (((entity?.position) == null) || !bot.entity?.position) {
 			await sleep(150);
 			continue;
@@ -837,13 +774,14 @@ async function botSmartFollow (matchesStr, range): Promise<void> {
 			await sleep(150);
 			continue;
 		}
-		goal = new goals.GoalFollow(entity, range);
-		await withPriority(10, 220, true, false, botLookPriorityCache);
-		await bot.pathfinder.goto(goal).catch((e) => {
-			const err: Error = e;
+		const goal = new goals.GoalFollow(entity, range);
+		try {
+			await bot.pathfinder.goto(goal, () => { console.log('dddd') });
+		} catch (e) {
+			const err = e as Error;
 			error('Could not follow the player.\n' + err.message, true, err);
-			goal = new goals.GoalFollow(entity, range);
-		});
+			await sleep(1400);
+		}
 	}
 }
 
@@ -886,7 +824,7 @@ commands.commands.unFollow = () => {
 	success('Not following anyone');
 };
 
-commands.commands.attack = (matchesStr: string, cps: number, reach: number, minreach: number) => {
+commands.commands.attack = (matchesStr: string, cps: number, reach: number, minreach: number, force = true) => {
 	if (commands.tmp.botAttacking) {
 		warn('Player is already attacking someone. Use ".stopattack"');
 		return;
@@ -912,6 +850,8 @@ commands.commands.attack = (matchesStr: string, cps: number, reach: number, minr
 	commands.tmp.botAttacking = true;
 	success(`Attacking nearest entity with ${cps}CPS if ${matchesStr} and MinReach(${minreach}) < distance < MaxReach(${reach})`);
 
+	const yaw = bot.entity.yaw;
+	const pitch = bot.entity.pitch;
 	void (
 		async () => {
 			while (commands.tmp.botAttacking) {
@@ -928,7 +868,8 @@ commands.commands.attack = (matchesStr: string, cps: number, reach: number, minr
 						} catch {
 							if (!err) err = true;
 						}
-					})
+					}),
+					force
 				);
 				if (err) {
 					commands.tmp.botAttacking = false;
@@ -936,6 +877,7 @@ commands.commands.attack = (matchesStr: string, cps: number, reach: number, minr
 					error('Invalid EntityMatches');
 				}
 			}
+			await bot.look(yaw, pitch, true);
 		}
 	)();
 };
@@ -950,28 +892,23 @@ commands.commands.stopAttack = () => {
 	success('Not attacking anyone');
 };
 
-commands.commands.look = async (a: number | string, b: number | boolean, c?: boolean) => {
-	if (a && !isNumber(a)) {
-		if (b === undefined) b = true;
-		const dir = a;
-		if (mcUtils.look(mcUtils.directionToYaw[dir]) === false) {
-			info(getCmdInfo('look'));
-		} else success(`Looking ${dir}`);
-	} else if (isNumber(a) && (isNumber(b && typeof b !== 'boolean'))) {
-		if (a > 90 || b > 90) {
-			warn('Yaw or Pitch cannot be more than 90 deg');
-			return;
-		}
-		if (a < -90 || b < -90) {
-			warn('Yaw or Pitch cannot be less than -90 deg');
-			return;
-		}
-		if (c === undefined) {
-			c = true;
-		}
-		await bot.look(-(Number(a) + 180) / 57.296329454, -b / 57.296329454, c);
-		success(`Set Yaw to ${a} and Pitch to ${String(b)}`);
-	} else info('Usage: .look [Direction:north|south|east|west] [Yaw] [Pitch]');
+commands.commands.look = async (directionOrYaw: string | number, pitchOrForce?: number | boolean, force?: boolean) => {
+	const isDirection = isString(directionOrYaw) && Object.keys(mcUtils.directionToYaw).includes(directionOrYaw);
+	const yaw = isDirection ? mcUtils.directionToYaw[directionOrYaw] as number | undefined : directionOrYaw;
+	const pitch = isDirection ? undefined : pitchOrForce as number;
+	force = isDirection ? pitchOrForce as (boolean | undefined) : force;
+
+	if (!(isNumber(yaw) || yaw === undefined) || !(isNumber(pitch) || pitch === undefined) || (yaw === undefined && pitch === undefined)) {
+		info(currentLang.data.commands.look.usage);
+		return;
+	}
+
+	await mcUtils.look(yaw, pitch, force);
+	success(
+		`Set ${yaw !== undefined ? `Yaw to ${yaw}` : ''}` +
+		`${yaw !== undefined && pitch !== undefined ? ' and ' : ''}` +
+		`${pitch !== undefined ? `Pitch to ${pitch}` : ''}`
+	);
 };
 
 commands.commands.lookAt = (playerName: string, maxReach: number, minReach: number = maxReach, force: boolean) => {

@@ -80,7 +80,7 @@
 		"vec3": "^0.1.8"
 	},
 	"devDependencies": {
-		"@types/node": "^18.15.0",
+		"@types/node": "^18.15.1",
 		"@types/shelljs": "^0.8.11",
 		"@typescript-eslint/eslint-plugin": "^5.54.1",
 		"@typescript-eslint/parser": "^5.54.1",
@@ -93,6 +93,7 @@
 		"pkg": "^5.8.1",
 		"prismarine-block": "^1.16.3",
 		"prismarine-chat": "^1.8.0",
+		"prismarine-entity": "^2.2.0",
 		"prismarine-item": "^1.12.1",
 		"prismarine-registry": "^1.7.0",
 		"prismarine-windows": "^2.6.1",

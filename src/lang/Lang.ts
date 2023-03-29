@@ -49,6 +49,7 @@ export class Lang {
 			noInvToClose: string
 			noContainerOpenRN: string
 			noCmdProvided: string
+			invalidDirection: (dir: string) => string
 		}
 	} = {
 			logger: {
@@ -114,7 +115,7 @@ export class Lang {
 				},
 				digMap: {
 					description: 'A map where the bot always tries digging the blocks inside it',
-					usage: 'Usage: digMap <Action: add|remove|clear|addfromto|show>',
+					usage: 'Usage: digMap <Action: add|remove|clear|addspace|show>',
 					subCommands: {
 						add: {
 							description: 'Add a block\'s coordinates',
@@ -291,7 +292,10 @@ export class Lang {
 				yawPitchMinErr: 'Yaw or Pitch cannot be less than -90 deg',
 				noInvToClose: 'There is nothing to close',
 				noContainerOpenRN: 'There is no container opened right now',
-				noCmdProvided: 'No command provided'
+				noCmdProvided: 'No command provided',
+				invalidDirection (dir) {
+					return `Invalid direction: ${dir}`;
+				}
 			}
 		};
 

@@ -1,4 +1,5 @@
 import { sleep } from '../../helpers/sleep.js';
+import { isNumber } from '../numbers/isNumber.js';
 
 export class Priority {
 	public priority = 0;
@@ -13,27 +14,27 @@ export async function withPriority (
 	cache = new Priority(),
 	callback?: () => void | Promise<void>
 ): Promise<void> {
-	if (isNaN(cooldown)) {
+	if (!isNumber(cooldown)) {
 		return;
 	}
 
-	let shouldCallback = false;
+	let isOnCooldown = false;
 
 	if (priority < cache.priority || (countSamePriority && priority <= cache.priority)) {
 		const sleepTime = cache.cooldown - Date.now();
 
 		if (sleepTime > 0) {
 			await sleep(sleepTime);
-			shouldCallback = true;
+			isOnCooldown = true;
 		}
+	}
+
+	if (!isOnCooldown || doIfOnCooldown) {
+		await callback?.();
 	}
 
 	if (cache.cooldown < Date.now() + cooldown) {
 		cache.priority = priority;
 		cache.cooldown = Date.now() + cooldown;
-	}
-
-	if (shouldCallback || doIfOnCooldown) {
-		await callback?.();
 	}
 }

@@ -3,9 +3,9 @@ import { type Window } from 'prismarine-windows';
 import { sleep } from '../../helpers/sleep.js';
 import { shallowCompareObj } from './utils.js';
 import { type Block } from 'prismarine-block';
-import { type Entity } from 'minecraft-data';
+import { type Entity } from 'prismarine-entity';
 import { v, type Vec3 } from '../../vec3.js';
-import { distance } from '../numbers';
+import { distance, clamp, degToRadian, isNumber, maxDeg } from '../numbers';
 import { type Bot } from 'mineflayer';
 
 let bot: Bot;
@@ -215,10 +215,21 @@ export const directionToPitch = {
 	down: 90
 };
 
-export async function look (pitch: number, yaw: number, force: boolean): Promise<void> {
-	// markiplier
-	const multiplier = 19.09877648466666 * bot.physics.yawSpeed;
-	await bot.look(-(Number(yaw) + 180) / multiplier, -pitch / multiplier, force);
+/**
+ * Changes the direction the bot is looking at.
+ * @async
+ * @function
+ * @param {number} [yaw] - The horizontal angle to look at in degrees. If not provided, the bot will keep its current yaw.
+ * @param {number} [pitch] - The vertical angle to look at in degrees. If not provided, the bot will keep its current pitch.
+ * @param {boolean} [force=true]
+ * @returns {Promise<void>}
+ */
+export async function look (yaw?: number, pitch?: number, force = true): Promise<void> {
+	await bot.look(
+		isNumber(yaw) ? degToRadian(clamp(maxDeg(180 - yaw, 180), -180, 180)) : bot.entity.yaw,
+		isNumber(pitch) ? degToRadian(clamp(maxDeg(-pitch, 90), -90, 90)) : bot.entity.pitch,
+		force
+	);
 }
 
 /**
@@ -281,38 +292,88 @@ export async function moveXZ (
 	}
 }
 
-interface EEntity extends Entity { position: Vec3 }
-
 /**
 	* Attacks an entity.
 	*/
-export async function botAttack (minReach: number, maxReach: number, entity: EEntity): Promise<void> {
+export async function botAttack (minReach: number, maxReach: number, entity: Entity, force = true): Promise<void> {
 	if (!entity?.position || ['object', 'orb'].includes(entity.type)) {
 		return;
 	}
-	const dist = distance(entity.position, bot.entity.position);
-	if (dist < maxReach && dist > minReach) {
-		let yaw;
-		let pitch;
-		let ent = bot.entityAtCursor(maxReach);
-		if (shallowCompareObj(ent, entity)) {
+	const attack = (): boolean => {
+		const ent = bot.entityAtCursor(maxReach + 0.5) as Entity | undefined;
+
+		if (ent && shallowCompareObj(ent, entity)) {
 			bot.attack(ent);
-			return;
+			return true;
 		}
-		await withPriority(3, 0, true, false, botLookPriorityCache, async () => {
-			const lookAt = v(entity.position.x, entity.position.y + (entity.height ?? 0), entity.position.z);
-			yaw = bot.entity.yaw;
-			pitch = bot.entity.pitch;
-			await bot.lookAt(lookAt, true);
+		return false;
+	};
+
+	const dist = distance(
+		entity.position.offset(0, entity.height, 0),
+		bot.entity.position.offset(0, bot.entity.height, 0)
+	);
+
+	if (dist > maxReach || dist < minReach) {
+		return;
+	}
+	if (attack()) {
+		return;
+	}
+	await withPriority(4, 200, true, false, botLookPriorityCache, async () => {
+		const lookAt = v(entity.position.x, entity.position.y + (entity.height ?? 0), entity.position.z);
+		await bot.lookAt(lookAt, force);
+	});
+	attack();
+}
+
+export function getYawAndPitchToVec (targetPos: Vec3): { yaw: number, pitch: number } {
+	const dx = bot.entity.position.x - targetPos.x;
+	const dy = bot.entity.position.y - targetPos.y;
+	const dz = bot.entity.position.z - targetPos.z;
+
+	const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+	const pitch = Math.asin(dy / distance);
+	const yaw = Math.atan2(dx, dz);
+
+	return { yaw, pitch };
+}
+
+export async function followEntityWithJump (entity: Entity, range: number): Promise<void> {
+	// Calculate the distance between the bot and the entity
+	const dist = distance(
+		{ x: bot.entity.position.x, z: bot.entity.position.z },
+		{ x: entity.position.x, z: entity.position.z }
+	);
+
+	// If the entity is within range, move towards it
+	if (dist >= range) {
+		bot.setControlState('sprint', true);
+		// Get the direction vector towards the entity
+		const dir = entity.position.clone().offset(-bot.entity.position.x, -entity.position.y, -bot.entity.position.z).normalize();
+
+		// Check if there's a block in front of the bot
+		const blockInFront = bot.blockAt(bot.entity.position.plus(dir))?.boundingBox !== 'empty' ||
+		bot.blockAt(bot.entity.position.plus(dir.scaled(2.4)))?.boundingBox !== 'empty';
+
+		if (blockInFront && bot.entity.onGround) {
+		// Jump if there's a block in front of the bot
+			bot.setControlState('jump', true);
+			bot.setControlState('jump', false);
+		}
+		// Move towards the entity
+		await withPriority(3, 150, false, false, botLookPriorityCache, async () => {
+			const { yaw } = getYawAndPitchToVec(entity.position);
+			const yawDiff = Math.abs(bot.entity.yaw - yaw);
+			if (yawDiff > 0.15) {
+				await bot.look(yaw, bot.entity.pitch, true);
+			}
 		});
-		ent = bot.entityAtCursor(maxReach);
-		if (shallowCompareObj(ent, entity)) {
-			bot.attack(ent);
-			return;
-		}
-		if (yaw && pitch) {
-			await bot.look(yaw, pitch, true);
-		}
+		bot.setControlState('forward', true);
+	} else {
+	// Stop moving if the entity is out of range
+		bot.setControlState('forward', false);
 	}
 }
 
