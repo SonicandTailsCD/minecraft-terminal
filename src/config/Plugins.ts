@@ -1,5 +1,5 @@
 import { builtinPluginsPath } from '../lib/helpers/configPath.js';
-import { displayName } from '../lib/utils/strings/index.js;
+import { displayName } from '../lib/utils/strings/index.js';
 import { readdirSync } from 'fs';
 
 export class Plugins {

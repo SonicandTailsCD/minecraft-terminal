@@ -1,4 +1,4 @@
-import { escapeRegExp as escapeRegex } from './utils/strings/index.js;
+import { escapeRegExp as escapeRegex } from './utils/strings/index.js';
 
 function parse (str: string): boolean {
 	let strCopy = str.toLowerCase().replace(/\s/g, '');

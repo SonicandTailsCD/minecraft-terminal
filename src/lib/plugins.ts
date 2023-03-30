@@ -1,6 +1,6 @@
 import { existsSync } from 'fs';
 import { type Settings } from '../config/settings';
-import { displayName } from './utils/strings/index.js;
+import { displayName } from './utils/strings/index.js'
 import * as ansi from 'easy-ansi';
 import { print, info, warn, error, success, commands, reservedCommandNames, nonVanillaCommands, bot } from './commands.js';
 import { type BotOptions } from 'mineflayer';
