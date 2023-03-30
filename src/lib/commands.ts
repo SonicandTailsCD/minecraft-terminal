@@ -685,7 +685,7 @@ commands.commands.follow = async (matchesStr: string, range: number) => {
 };
 
 commands.commands.pathfind = async (X: number, ZOrY: number, Z?: number) => {
-	if (!isNumber(X) || !isNumber(ZOrY) || (!isNumber(Z) && Z !== undefiend)) {
+	if (!isNumber(X) || !isNumber(ZOrY) || (!isNumber(Z) && Z !== undefined)) {
 		info(getCmdInfo('pathfind'));
 		return;
 	}
