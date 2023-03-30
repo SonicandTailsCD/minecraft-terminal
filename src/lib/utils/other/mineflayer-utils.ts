@@ -5,7 +5,7 @@ import { shallowCompareObj } from './utils.js';
 import { type Block } from 'prismarine-block';
 import { type Entity } from 'prismarine-entity';
 import { v, type Vec3 } from '../../vec3.js';
-import { distance, clamp, degToRadian, isNumber, maxDeg } from '../numbers';
+import { distance, clamp, degToRadian, isNumber, maxDeg } from '../numbers/index.js;
 import { type Bot } from 'mineflayer';
 
 let bot: Bot;

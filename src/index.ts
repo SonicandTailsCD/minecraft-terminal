@@ -13,19 +13,9 @@ import { info, error, setup as loggerSetup } from './lib/log.js';
 
 info('Loading...', false);
 
-import { setUncaughtExcep as uncaughtExcep } from './init/uncaughtExcep.js';
-import { setup as botSetup, botMain } from './lib/helpers/bot.js';
 import { load as loadConfig } from './init/loadConfig.js';
-import { importTOML } from './lib/helpers/importTOML.js';
-import { configPath } from './lib/helpers/configPath.js';
 import { updateConfig } from './init/updateConfig.js';
-import { overrideCred } from './init/overrideCred.js';
-import { promptCred } from './init/promptCred.js';
 import * as lang from './lang/translatable.js';
-import { makeChat } from './init/makeChat.js';
-import { commands } from './lib/commands.js';
-import type { Chat } from 'basic-chat-cli';
-import { join } from 'path';
 
 updateConfig();
 Object.assign(settings.config.config, loadConfig(settings));
@@ -38,6 +28,17 @@ Object.assign(settings.config.config, loadConfig(settings));
 }
 
 info(lang.currentLang.data.misc.loading, false);
+
+import { setUncaughtExcep as uncaughtExcep } from './init/uncaughtExcep.js';
+import { setup as botSetup, botMain } from './lib/helpers/bot.js';
+import { importTOML } from './lib/helpers/importTOML.js';
+import { configPath } from './lib/helpers/configPath.js';
+import { overrideCred } from './init/overrideCred.js';
+import { promptCred } from './init/promptCred.js';
+import { makeChat } from './init/makeChat.js';
+import { commands } from './lib/commands.js';
+import type { Chat } from 'basic-chat-cli';
+import { join } from 'path';
 
 overrideCred(settings);
 uncaughtExcep(settings);

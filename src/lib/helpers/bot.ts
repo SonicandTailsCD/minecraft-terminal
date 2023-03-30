@@ -7,7 +7,7 @@ import * as mineflayer from 'mineflayer';
 import { currentLang } from '../../lang/translatable.js';
 import * as commands from '../commands.js';
 import path from 'path';
-import { displayName } from '../utils/strings';
+import { displayName } from '../utils/strings/index.js';
 import { configPath } from './configPath.js';
 import { importTOML } from './importTOML.js';
 import { srcPath } from './mainPath.js';

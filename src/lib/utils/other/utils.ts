@@ -1,5 +1,5 @@
 import { logicExp } from '../../logicExp.js';
-import { escapeRegExp as escapeRegex } from '../strings';
+import { escapeRegExp as escapeRegex } from '../strings/index.js;
 import { isPlainObject } from 'merge';
 import { isNumber } from '../numbers/isNumber.js';
 
