@@ -14,7 +14,7 @@ import { info, error, setup as loggerSetup } from './lib/log.js';
 info('Loading...', false);
 
 import { setUncaughtExcep as uncaughtExcep } from './init/uncaughtExcep.js';
-import { setup as botMainSetup, botMain } from './lib/helpers/botMain.js';
+import { setup as botSetup, botMain } from './lib/helpers/bot.js';
 import { load as loadConfig } from './init/loadConfig.js';
 import { importTOML } from './lib/helpers/importTOML.js';
 import { configPath } from './lib/helpers/configPath.js';
@@ -58,7 +58,7 @@ void (async () => {
 		settings.bot.cred.port = Number(port);
 	}
 
-	botMainSetup(chat, settings);
+	botSetup(chat, settings);
 	await botMain();
 
 	const tasksTOMLPath = join(configPath, 'tasks.toml');
