@@ -19,22 +19,16 @@ import { isNumber } from '../numbers/isNumber.js';
  * @return A string with the variables parsed.
  */
 export function parseVar (str: string, variablesObj: object, options?: { varPrefix?: string, varSuffix?: string, undefinedVar?: string }): string {
-	options = Object.assign({
-		varPrefix: '%',
-		varSuffix: '%',
-		undefinedVar: 'undefined'
-	}, options);
-
 	// Parse the variables
-	const varPrefixRegex = escapeRegex(options.varPrefix!);
-	const varSuffixRegex = escapeRegex(options.varSuffix!);
+	const varPrefixRegex = escapeRegex(options?.varPrefix ?? '%');
+	const varSuffixRegex = escapeRegex(options?.varSuffix ?? '%');
 	let out = str.valueOf();
 	Object.keys(variablesObj).forEach((value) => {
 		out = out.replace(new RegExp(varPrefixRegex + escapeRegex(value) + varSuffixRegex, 'g'), variablesObj[value as keyof object]);
 	});
 
 	// Replaces everything else that isn't inside the variablesObj with undefinedVar
-	out = out.replace(new RegExp(`${varPrefixRegex}[^${varSuffixRegex}]+${varSuffixRegex}`, 'g'), options.undefinedVar!);
+	out = out.replace(new RegExp(`${varPrefixRegex}[^${varSuffixRegex}]+${varSuffixRegex}`, 'g'), options?.undefinedVar ?? 'undefined');
 	return out;
 }
 

@@ -176,7 +176,7 @@ export async function placeBlock (position: Vec3): Promise<Block | null | undefi
 		});
 
 		// Using this instead of rayCastToBlockFromEntity because it gives the face property
-		await bot.lookAt(adjBlock.position.plus(offset), true);
+		await lookAtVec(adjBlock.position.plus(offset), true);
 		const blockRef = bot.blockAtCursor(4);
 
 		if (!blockRef || blockRef.face !== adjBlockFace || distance(blockRef.position, adjBlock.position) !== 0) {
@@ -267,7 +267,7 @@ export async function moveXZ (
 	bot.setControlState('sprint', true);
 	bot.setControlState('forward', true);
 	await withPriority(9, 100, true, false, botLookPriorityCache, async () => {
-		await bot.lookAt(v(x, bot.entity.position.y + bot.entity.height, z), true);
+		await lookAtVec(v(x, bot.entity.position.y + bot.entity.height, z), true);
 	});
 	await sleep(60);
 	while (dist >= range && dist < oldDist) {
@@ -276,7 +276,7 @@ export async function moveXZ (
 		}
 		oldDist = dist.valueOf();
 		await withPriority(9, 100, true, false, botLookPriorityCache, async () => {
-			await bot.lookAt(v(x, bot.entity.position.y + bot.entity.height, z), true);
+			await lookAtVec(v(x, bot.entity.position.y + bot.entity.height, z), true);
 		});
 		await sleep(int);
 		dist = distance({ x: bot.entity.position.x, z: bot.entity.position.z }, goal) - 0.16;

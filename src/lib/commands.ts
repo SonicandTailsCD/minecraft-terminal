@@ -932,7 +932,7 @@ commands.commands.lookAt = (playerName: string, maxReach: number, minReach: numb
 				if (bot.players[playerName]?.entity?.position) {
 					const dist = distance(bot.players[playerName]?.entity?.position, bot.entity.position);
 					if (dist < maxReach && dist > minReach) {
-						await bot.lookAt(v(bot.players[playerName].entity.position.x, bot.players[playerName].entity.position.y + bot.players[playerName].entity.height, bot.players[playerName].entity.position.z), force);
+						await mcUtils.lookAtVecMaxReach(bot.players[playerName].entity.position, bot.players[playerName].entity.height, bot.players[playerName].entity.width, force);
 					}
 				}
 				await sleep(100);

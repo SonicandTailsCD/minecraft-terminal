@@ -42,7 +42,7 @@
 		"mc-term": "./dist/index.js"
 	},
 	"scripts": {
-		"build": "eslint . --fix; tsc; echo",
+		"build": "npm ci; eslint . --fix; tsc; echo",
 		"pkg": "npm run build; pkg . --compress Brotli --options='max-semi-space-size=128,max-old-space-size=300'",
 		"prepublishOnly": "npm run build"
 	},
@@ -90,6 +90,7 @@
 		"eslint-plugin-import": "^2.29.1",
 		"eslint-plugin-n": "^16.6.2",
 		"eslint-plugin-promise": "^6.1.1",
+		"pkg": "^5.8.1",
 		"prismarine-block": "^1.17.1",
 		"prismarine-chat": "^1.9.1",
 		"prismarine-entity": "^2.4.0",
