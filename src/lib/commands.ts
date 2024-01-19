@@ -351,7 +351,7 @@ commands.commands.blocks = async (range, count, filter) => {
 	const regex = new RegExp(filter, 'i');
 	for (const blockPos of blocksCoords) {
 		const block = bot.blockAt(blockPos);
-		if ((block == null) || ((block.displayName?.match(regex)) == null)) {
+		if ((block?.displayName?.match(regex) == null)) {
 			continue;
 		}
 		print(`       ${logger.info.color}${block.position.x}, ${block.position.y} ${block.position.z}  ${block.displayName}: ${String(block.diggable)}${ansi.color.reset}`);
@@ -776,7 +776,7 @@ async function botSmartFollow (matchesStr, range): Promise<void> {
 		}
 		const goal = new goals.GoalFollow(entity, range);
 		try {
-			await bot.pathfinder.goto(goal, () => { console.log('dddd') });
+			await bot.pathfinder.goto(goal);
 		} catch {
 			await sleep(1400);
 		}
@@ -860,11 +860,11 @@ commands.commands.attack = (matchesStr: string, cps: number, reach: number, minr
 					reach,
 					bot.nearestEntity((entity) => {
 						try {
-							if (matchEq(matchesStr, entity) && (entity.type === 'player' || entity.type === 'mob')) {
+							if (matchEq(matchesStr, entity) && (entity.type === 'player' || entity.type === 'mob' || entity.type === 'animal')) {
 								return true;
 							}
 						} catch {
-							if (!err) err = true;
+							err = true;
 						}
 					}),
 					force

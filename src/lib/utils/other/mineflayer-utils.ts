@@ -301,7 +301,6 @@ export async function botAttack (minReach: number, maxReach: number, entity: Ent
 	}
 	const attack = (): boolean => {
 		const ent = bot.entityAtCursor(maxReach + 0.5) as Entity | undefined;
-
 		if (ent && shallowCompareObj(ent, entity)) {
 			bot.attack(ent);
 			return true;
@@ -321,22 +320,42 @@ export async function botAttack (minReach: number, maxReach: number, entity: Ent
 		return;
 	}
 	await withPriority(4, 200, true, false, botLookPriorityCache, async () => {
-		const lookAt = v(entity.position.x, entity.position.y + (entity.height ?? 0), entity.position.z);
-		await bot.lookAt(lookAt, force);
+		await lookAtVecMaxReach(entity.position, entity.height, entity.width, force);
 	});
 	attack();
 }
 
+export async function lookAtVec (targetPos: Vec3, force = true): Promise<void> {
+	const pos = getYawAndPitchToVec(targetPos);
+	await bot.look(pos.yaw, pos.pitch, force);
+}
+
+export async function lookAtVecMaxReach (targetPos: Vec3, targetHeight: number, targetWidth: number, force = true): Promise<void> {
+	const pos = getYawAndPitchToVecMaxReach(targetPos, targetHeight, targetWidth);
+	await bot.look(pos.yaw, pos.pitch, force);
+}
+
+export function getYawAndPitchToVecMaxReach (targetPos: Vec3, targetHeight: number, targetWidth: number): { yaw: number, pitch: number } {
+	const delta = targetPos.minus(bot.entity.position.offset(0, bot.entity.height, 0));
+	const distance = Math.sqrt(delta.x * delta.x + delta.z * delta.z);
+	let pitch: number;
+	if (delta.y > 0) {
+		pitch = Math.atan(delta.y / distance);
+	} else if (delta.y < -targetHeight) {
+		pitch = Math.atan((delta.y + targetHeight) / distance);
+	} else {
+		pitch = 0;
+	}
+	const yaw = Math.atan2(-delta.x, -delta.z);
+	return { yaw, pitch };
+}
+
 export function getYawAndPitchToVec (targetPos: Vec3): { yaw: number, pitch: number } {
-	const dx = bot.entity.position.x - targetPos.x;
-	const dy = bot.entity.position.y - targetPos.y;
-	const dz = bot.entity.position.z - targetPos.z;
+	const delta = targetPos.minus(bot.entity.position.offset(0, bot.entity.height, 0));
+	const distance = Math.sqrt(delta.x * delta.x + delta.z * delta.z);
 
-	const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-
-	const pitch = Math.asin(dy / distance);
-	const yaw = Math.atan2(dx, dz);
-
+	const pitch = Math.atan(delta.y / distance);
+	const yaw = Math.atan2(-delta.x, -delta.z);
 	return { yaw, pitch };
 }
 

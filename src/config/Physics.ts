@@ -1,4 +1,3 @@
-
 export class Physics {
 	public usePhysicsConfig = false;
 	public gravity = 0.08;

@@ -1,4 +1,3 @@
-
 export class Credentials {
 	public auth = '';
 	public username = '';
