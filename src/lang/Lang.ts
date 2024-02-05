@@ -42,6 +42,7 @@ export class Lang {
 			scriptOnlyCmd: string
 			cantDigBlockAt: (x: number | string, y: number | string, z: number | string, err: Error) => string
 			alreadyRunning: string
+			alreadyRunningNoSwears: string
 			alreadyBlockThere: string
 			blockPlaceAdjErr: string
 			yawPitchMaxErr: string
@@ -286,6 +287,7 @@ export class Lang {
 					return `Bot cannot dig block at ${x}, ${y}, ${z}.\n${(err).message}`;
 				},
 				alreadyRunning: 'The command\'s already been triggered, dumbshit! :P',
+				alreadyRunningNoSwears: "Command already triggered :(",
 				alreadyBlockThere: 'There\'s already a block there',
 				blockPlaceAdjErr: 'There should be a block right next to where you would place the block bro, otherwise you can get banned',
 				yawPitchMaxErr: 'Yaw or Pitch cannot be more than 90 degrees',
