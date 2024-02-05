@@ -285,11 +285,11 @@ export class Lang {
 				cantDigBlockAt (x, y, z, err) {
 					return `Bot cannot dig block at ${x}, ${y}, ${z}.\n${(err).message}`;
 				},
-				alreadyRunning: 'Already ran this command',
+				alreadyRunning: 'The command\'s already been triggered, dumbshit! :P',
 				alreadyBlockThere: 'There\'s already a block there',
-				blockPlaceAdjErr: 'There should be a block right next to where you would place the block',
-				yawPitchMaxErr: 'Yaw or Pitch cannot be more than 90 deg',
-				yawPitchMinErr: 'Yaw or Pitch cannot be less than -90 deg',
+				blockPlaceAdjErr: 'There should be a block right next to where you would place the block bro, otherwise you can get banned',
+				yawPitchMaxErr: 'Yaw or Pitch cannot be more than 90 degrees',
+				yawPitchMinErr: 'Yaw or Pitch cannot be less than -90 degrees',
 				noInvToClose: 'There is nothing to close',
 				noContainerOpenRN: 'There is no container opened right now',
 				noCmdProvided: 'No command provided',
