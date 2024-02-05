@@ -82,7 +82,7 @@ export class Lang {
 				},
 				send: {
 					description: 'Send a message in chat',
-					usage: 'Usage: send <Message>'
+					usage: 'Usage: send [message goes here]'
 
 				},
 				position: {
@@ -161,11 +161,11 @@ export class Lang {
 
 				},
 				forceMove: {
-					description: 'Move the player in seconds',
+					description: 'Move the bot in seconds',
 					usage: undefined
 				},
 				control: {
-					description: 'Set a control state of the player',
+					description: 'Set a control state of the bot',
 					usage: 'Usage: control <Control: forward|back|left|right|jump|sneak> <State: true, false>'
 
 				},
@@ -175,8 +175,8 @@ export class Lang {
 
 				},
 				smartFollow: {
-					description: 'Same as follow but uses advanced pathfinding (bad with anti cheats)',
-					usage: 'Usage: smartfollow <EntityMatches:$name=pig|$name!=pig|...> <Range>. Range > 0'
+					description: "It's the same as follow but uses (not so) advanced pathfinding (very bad with anti cheats)",
+					usage: "Usage: smartfollow <EntityMatchRequest:$name=pig|$name!=pig|...> <Range>. The range HAS to be above 0."
 
 				},
 				unFollow: {
@@ -199,16 +199,16 @@ export class Lang {
 				},
 				lookAt: {
 					description: 'Look at a player',
-					usage: 'Usage: lookat <Player> <MaxReach> <MinReach> [Force:yes|y|no|n]. MaxReach > MinReach'
+					usage: 'Usage: lookat <Player> <MaxReach> <MinReach> [Force:yes|y|no|n]. MaxReach number has to be above MinReach.'
 
 				},
 				stopLook: {
-					description: 'Stop looking',
+					description: 'Stop looking (player/coordinate)',
 					usage: undefined
 				},
 				inventory: {
 					description: 'Inventory management',
-					usage: 'Usage: inventory <ID:0|inventory|1|container> [Action:click|move|drop|dropall] [...Action Args]',
+					usage: 'Usage: inventory <ID:0 (inventory) ID:1 (container), type the number> [Action:click|move|drop|dropall] [...Action Args]',
 					subCommands: {
 						click: {
 							description: 'Click a slot in a container',
@@ -273,14 +273,14 @@ export class Lang {
 				}
 			},
 			infoMessages: {
-				botMovingErr: 'Cannot use this command while player is moving.',
-				botLookingOrAttackingErr: 'Cannot use this command while player is attacking/looking at something.',
-				connectErr: 'Could not connect to server.',
-				death: 'You died. Respawning...',
+				botMovingErr: 'Cannot use this command while this bot is moving.',
+				botLookingOrAttackingErr: 'Cannot use this command while bot is attacking/looking at something.',
+				connectErr: "Couldn't connect to server.",
+				death: 'Bot died. Respawning...',
 				invalidCmd (cmd) {
-					return `'${cmd}' is not a valid command`;
+					return `'${cmd}' isn't a valid command :(`;
 				},
-				nonVanillaCmd: 'This command uses some non-vanilla features to work which may get you banned on some servers. You can enable it in the configuration',
+				nonVanillaCmd: 'This command uses some non-vanilla features to work which may get you banned on some servers. You can enable it in the configuration!\nType \"mc-term --get-conf-path\" to get the location of the config file :)',
 				scriptOnlyCmd: 'This command can only be used inside scripts',
 				cantDigBlockAt (x, y, z, err) {
 					return `Bot cannot dig block at ${x}, ${y}, ${z}.\n${(err).message}`;

@@ -139,8 +139,8 @@ export async function botMain (): Promise<Bot> {
 			void handleInput(msg);
 		});
 
-		// Check for updates
-		await checkForUpdates();
+		// Check for updates (disabled)
+		// await checkForUpdates();
 	});
 
 	return bot;
@@ -182,7 +182,7 @@ function setListeners (): void {
 	// Detect chat messages and print them to console
 	bot.on('message', (rawmsg) => {
 		if (loggedIn) {
-			onMessage(rawmsg);
+			onMessage(rawmsg); //Output messages
 			return;
 		}
 		beforeLoginMsgs.push(rawmsg);
