@@ -5,7 +5,7 @@ class Config {
     language = 'EN';
     RCON = {
         enabled: true,
-        RegEx: '(?<=/)+',
+        RegEx: '(?<=!).+',
         RegExFlags: ''
     };
     commands = {

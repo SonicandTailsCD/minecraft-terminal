@@ -9,7 +9,7 @@ export class Config {
 		RegExFlags: string
 	} = {
 			enabled: true,
-			RegEx: '(?<=/)+',
+			RegEx: '(?<=!).+',
 			RegExFlags: ''
 		};
 
