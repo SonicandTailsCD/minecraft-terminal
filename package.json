@@ -46,7 +46,9 @@
 	"scripts": {
 		"build": "npm ci; eslint . --fix; tsc; echo \"Done! :D\"",
 		"pkg": "npm run build; pkg . --compress Brotli --options='max-semi-space-size=128,max-old-space-size=300'",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "npm run build",
+		"windows-run": "node dist/index.js",
+		"linux-run": "node ./dist/index.js"
 	},
 	"pkg": {
 		"scripts": [
