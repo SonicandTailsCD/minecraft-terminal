@@ -87,7 +87,7 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist (Allow last JavaScript compile to be uploaded)
 
 # Gatsby files
 .cache/
@@ -109,4 +109,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Prohibit upload of node_modules
 node_modules

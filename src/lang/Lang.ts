@@ -177,7 +177,7 @@ export class Lang {
 				},
 				smartFollow: {
 					description: "It's the same as follow but uses (not so) advanced pathfinding (very bad with anti cheats)",
-					usage: "Usage: smartfollow <EntityMatchRequest:$name=pig|$name!=pig|...> <Range>. The range HAS to be above 0."
+					usage: 'Usage: smartfollow <EntityMatchRequest:$name=pig|$name!=pig|...> <Range>. The range HAS to be above 0.'
 
 				},
 				unFollow: {
@@ -287,7 +287,7 @@ export class Lang {
 					return `Bot cannot dig block at ${x}, ${y}, ${z}.\n${(err).message}`;
 				},
 				alreadyRunning: 'The command\'s already been triggered, dumbshit! :P',
-				alreadyRunningNoSwears: "Command already triggered :(",
+				alreadyRunningNoSwears: 'Command already triggered :(',
 				alreadyBlockThere: 'There\'s already a block there',
 				blockPlaceAdjErr: 'There should be a block right next to where you would place the block bro, otherwise you can get banned',
 				yawPitchMaxErr: 'Yaw or Pitch cannot be more than 90 degrees',

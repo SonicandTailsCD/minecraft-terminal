@@ -182,7 +182,7 @@ function setListeners (): void {
 	// Detect chat messages and print them to console
 	bot.on('message', (rawmsg) => {
 		if (loggedIn) {
-			onMessage(rawmsg); //Output messages
+			onMessage(rawmsg); // Output messages
 			return;
 		}
 		beforeLoginMsgs.push(rawmsg);

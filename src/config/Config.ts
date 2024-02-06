@@ -8,8 +8,8 @@ export class Config {
 		RegEx: string
 		RegExFlags: string
 	} = {
-			enabled: false,
-			RegEx: '(?<=!#).+',
+			enabled: true,
+			RegEx: '(?<=/)+',
 			RegExFlags: ''
 		};
 
@@ -18,7 +18,7 @@ export class Config {
 		enableNonVanillaCMD: boolean
 		commandAliases: Record<string, string>
 	} = {
-			commandPrompt: '>',
+			commandPrompt: '> ',
 			enableNonVanillaCMD: true,
 			commandAliases: {}
 		};
@@ -80,7 +80,7 @@ export class Config {
 				dontCreateFlow: true,
 				dontMineUnderFallingBlock: true,
 				allow1by1towers: true,
-				allowFreeMotion: false,
+				allowFreeMotion: true,
 				allowParkour: true,
 				allowSprinting: true,
 				allowEntityDetection: true,
@@ -93,7 +93,7 @@ export class Config {
 						chat: 'enabled',
 						colorsEnabled: true,
 						viewDistance: 'far',
-						mainHand: 'left',
+						mainHand: 'right',
 						enableTextFiltering: false,
 						enableServerListing: false,
 						skinParts: {
@@ -107,9 +107,9 @@ export class Config {
 						}
 					},
 					pathfinder: {
-						thinkTimeout: 2000,
+						thinkTimeout: 20000,
 						tickTimeout: 2,
-						searchRadius: 20,
+						searchRadius: 200,
 						enablePathShortcut: true,
 						LOSWhenPlacingBlocks: true
 					}
