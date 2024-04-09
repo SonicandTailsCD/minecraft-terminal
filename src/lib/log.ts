@@ -36,6 +36,28 @@ export const warn = (str: string, resetCursor = true): void => {
 };
 warn.color = color.reset + color.bold + color.rgb(255, 255, 85);
 
+let sleeping: boolean = false;
+export const debugging = (str: string, resetCursor = true, overrideSleep = false): void => {
+	if (sleeping = true) {
+		return
+	};
+	else {
+		const coloredStr = str.replace(/%COLOR%/g, debugging.color);
+		print(
+			`${debugging.color}[${currentLang.data.logger.debug}] ${padNewLines(coloredStr, 7, debugging.color) + color.reset}`,
+			{ resetCursor, clearLine: true }
+		);
+		sleeping = true;
+		sleep(2000);
+		sleeping = false;
+	}
+};
+debugging.color = color.reset + color.bold + color.rgb(212, 175, 55);
+
+async function sleep (ms: number) {
+	return await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export const error = (str: string, resetCursor = true): void => {
 	const coloredStr = str.replace(/%COLOR%/g, error.color);
 	print(

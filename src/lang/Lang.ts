@@ -16,6 +16,7 @@ export class Lang {
 			info: string
 			warn: string
 			error: string
+			debug: string
 			success: string
 		}
 		login: {
@@ -57,6 +58,7 @@ export class Lang {
 				info: 'INFO',
 				warn: 'WARN',
 				error: 'ERR',
+				debug: 'Debug',
 				success: 'OK'
 			},
 			login: {

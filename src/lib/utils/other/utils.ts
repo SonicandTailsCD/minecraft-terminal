@@ -2,6 +2,8 @@ import { logicExp } from '../../logicExp.js';
 import { escapeRegExp as escapeRegex } from '../strings/index.js';
 import { isPlainObject } from 'merge';
 import { isNumber } from '../numbers/isNumber.js';
+import * as logger from '../../log.js';
+import { stringify } from 'querystring';
 
 /**
  * The parseVar function takes a string and replaces all instances of variables with their values.
@@ -98,7 +100,10 @@ export function toLowerCaseArr (arr: string[]): string[] {
 
 export function matchEq (str: string, valObj: object): boolean {
 	let strCopy = String(str.valueOf());
+	logger.debugging(strCopy, true, false);
 	const matches = str.split(/[&|]/);
+	const matchesStr = matches.toString();
+	logger.debugging(matchesStr, true, false);
 	for (let i = 0; i < matches?.length; i++) {
 		const mat = matches[i];
 		const op = mat.match(/=|!=/)?.[0] ?? '';

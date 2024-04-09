@@ -17,6 +17,7 @@ class Lang {
             info: 'INFO',
             warn: 'WARN',
             error: 'ERR',
+            debug: 'Debug',
             success: 'OK'
         },
         login: {

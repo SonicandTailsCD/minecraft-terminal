@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.shallowCompareObj = exports.matchEq = exports.toLowerCaseArr = exports.parseStr = exports.parseVar = void 0;
+const tslib_1 = require("tslib");
 const logicExp_js_1 = require("../../logicExp.js");
 const index_js_1 = require("../strings/index.js");
 const merge_1 = require("merge");
 const isNumber_js_1 = require("../numbers/isNumber.js");
+const logger = tslib_1.__importStar(require("../../log.js"));
 function parseVar(str, variablesObj, options) {
     const varPrefixRegex = (0, index_js_1.escapeRegExp)(options?.varPrefix ?? '%');
     const varSuffixRegex = (0, index_js_1.escapeRegExp)(options?.varSuffix ?? '%');
@@ -62,7 +64,10 @@ function toLowerCaseArr(arr) {
 exports.toLowerCaseArr = toLowerCaseArr;
 function matchEq(str, valObj) {
     let strCopy = String(str.valueOf());
+    logger.debugging(strCopy, true);
     const matches = str.split(/[&|]/);
+    const matchesStr = matches.toString();
+    logger.debugging(matchesStr, true);
     for (let i = 0; i < matches?.length; i++) {
         const mat = matches[i];
         const op = mat.match(/=|!=/)?.[0] ?? '';
