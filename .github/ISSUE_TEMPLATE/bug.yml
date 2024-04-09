@@ -1,5 +1,5 @@
-name: Bug Report
-description: File a bug report
+name: Report a bug
+description: Report bugs of mc-term! 
 labels: [bug]
 body:
 - type: markdown
@@ -19,7 +19,9 @@ body:
     - Windows
     - macOS
     - Linux
+    - Raspbian?
     - Other
+    - I don\'t know!
 - type: textarea
   attributes:
     label: Version of Minecraft Terminal
@@ -49,7 +51,7 @@ body:
 - type: textarea
   attributes:
     label: Suspected cause
-    description: If you know what could be causing this bug, describe it here.
+    description: If you know what could be causing this bug, describe it here. Otherwise, don't type anything here :)
   validations:
     required: false
 - type: checkboxes

@@ -58,6 +58,11 @@ representative at an online or offline event.
 
 ## Enforcement
 
+Instances of abusive, harassing, or otherwise unacceptable behavior may be
+reported to the community leaders responsible for enforcement at
+sonicandtailscd@duck.com.
+All complaints will be reviewed and investigated promptly and fairly.
+
 All community leaders are obligated to respect the privacy and security of the
 reporter of any incident.
 
@@ -69,7 +74,8 @@ the consequences for any action they deem in violation of this Code of Conduct:
 ### 1. Correction
 
 **Community Impact**: Use of inappropriate language or other behavior deemed
-unprofessional or unwelcome in the community.
+unwelcome in the community. (Unprofessionalism is not required - not everyone
+knows perfect English :)
 
 **Consequence**: A private, written warning from community leaders, providing
 clarity around the nature of the violation and an explanation of why the
@@ -78,7 +84,9 @@ behavior was inappropriate. A public apology may be requested.
 ### 2. Warning
 
 **Community Impact**: A violation through a single incident or series
-of actions.
+of actions. And of course, inappropriate language/vile language to gain
+collaborator access, belittle/piss off another or to simply say "F*ck you"
+to everyone, WILL strike you.
 
 **Consequence**: A warning with consequences for continued behavior. No
 interaction with the people involved, including unsolicited interaction with
