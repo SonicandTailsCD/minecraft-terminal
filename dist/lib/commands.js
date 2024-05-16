@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PluginExports = exports.PluginExportsBefore = exports.setbotMain = exports.setBot = exports.bot = exports.commands = exports.nonVanillaCommands = exports.scriptOnlyCommands = exports.reservedCommandNames = exports.setConfig = exports.success = exports.error = exports.warn = exports.info = exports.print = exports.events = void 0;
 const tslib_1 = require("tslib");
+const debugging_1 = require("./lib/helpers/debugging");
 const utils_js_1 = require("./utils/other/utils.js");
 const mcUtils = tslib_1.__importStar(require("./utils/other/mineflayer-utils.js"));
 const parseCoords_js_1 = require("./utils/strings/parseCoords.js");
@@ -85,7 +86,10 @@ class Commands {
         botMoving: false,
         botLooking: false,
         botAttacking: false,
-        botDigging: false
+        botDigging: false,
+        Debugging: {
+            triggered: false
+        }
     };
     commands = {};
     async interpret(str, options = {}) {
@@ -516,7 +520,7 @@ exports.commands.commands.move = async (direction, distance) => {
     success(`Moved ${direction} for ${distance} ${unit}`);
 };
 async function botFollow(matchesStr, range) {
-    if (exports.commands.tmp.botMoving) {
+    if (this.tmp.botMoving) {
         return;
     }
     const sprintState = exports.bot.getControlState('sprint');
@@ -613,20 +617,34 @@ exports.commands.commands.control = (control, state) => {
     if (['forward', 'back', 'left', 'right', 'jump', 'sprint', 'sneak'].includes(control) && typeof state === 'boolean') {
         exports.bot.setControlState(control, state);
         success(`Set control state ${control} to ${String(state)}`);
-        return;
     }
-    if (control === 'clearall') {
+    else if (control === 'clearall') {
         exports.bot.clearControlStates();
         success('Cleared all control states');
-        return;
     }
-    info(getCmdInfo('control'));
+    else {
+        try {
+            logger.debugging(`That's not an input, silly! You expect the bot to go ${control} or what? :)`);
+            info(getCmdInfo('control'));
+        }
+        catch (err) {
+            error(`Exception occured: ${err}`);
+        }
+    }
 };
 async function botSmartFollow(matchesStr, range) {
+    logger.debugging('Still working!');
     if (!matchesStr || !range) {
         return;
     }
     (0, utils_js_1.matchEq)(matchesStr, {});
+    if (exports.commands.tmp.Debugging.triggered)
+        void (0, debugging_1.nothing)();
+    else {
+        logger.debugging(`Matches: ${(0, utils_js_1.matchEq)(matchesStr, {})}`, true, false);
+        exports.commands.tmp.Debugging.triggered = true;
+        void (0, debugging_1.nothing)();
+    }
     while (exports.commands.tmp.botMoving) {
         const entity = exports.bot.nearestEntity((entity) => {
             try {
@@ -640,7 +658,7 @@ async function botSmartFollow(matchesStr, range) {
         }
         const dist = (0, index_js_1.distance)(exports.bot.entity.position, entity.position) - 0.67;
         if (dist < range) {
-            await (0, sleep_js_1.sleep)(150);
+            await (0, sleep_js_1.sleep)(500);
             continue;
         }
         const goal = new mineflayer_pathfinder_1.goals.GoalFollow(entity, range);
@@ -648,10 +666,15 @@ async function botSmartFollow(matchesStr, range) {
             await exports.bot.pathfinder.goto(goal);
         }
         catch {
-            await (0, sleep_js_1.sleep)(1400);
+            await (0, sleep_js_1.sleep)(3000);
         }
     }
+    void exports.commands.commands.revertDebugValues();
 }
+exports.commands.commands.revertDebugValues = function () {
+    (0, sleep_js_1.sleep)(3000);
+    exports.commands.tmp.Debugging.triggered = false;
+};
 exports.commands.commands.smartFollow = async (matchesStr, range) => {
     if (exports.commands.tmp.botMoving) {
         warn(translatable_js_1.currentLang.data.infoMessages.botMovingErr);
@@ -707,7 +730,7 @@ exports.commands.commands.attack = (matchesStr, cps, reach, minreach, force = tr
     }
     exports.commands.tmp.botLooking = true;
     exports.commands.tmp.botAttacking = true;
-    success(`Attacking nearest entity with ${cps}CPS if ${matchesStr} and MinReach(${minreach}) < distance < MaxReach(${reach})`);
+    success(`Attacking nearest entity with ${cps}CPS if ${matchesStr} and if the entity is as close as ${minreach} blocks and within range of ${reach}`);
     const yaw = exports.bot.entity.yaw;
     const pitch = exports.bot.entity.pitch;
     void (async () => {
@@ -735,12 +758,12 @@ exports.commands.commands.attack = (matchesStr, cps, reach, minreach, force = tr
 };
 exports.commands.commands.stopAttack = () => {
     if (exports.commands.tmp.botLooking && !exports.commands.tmp.botAttacking) {
-        warn('Cannot use ".stopattack" because player is looking at someone\nConsider ".stoplook"');
+        warn('Cannot use ".stopattack" as bot is looking at something. Use ".stoplook" instead :)');
         return;
     }
     exports.commands.tmp.botAttacking = false;
     exports.commands.tmp.botLooking = false;
-    success('Not attacking anyone');
+    success('Stopped attacking');
 };
 exports.commands.commands.look = async (directionOrYaw, pitchOrForce, force) => {
     const isDirection = (0, index_js_2.isString)(directionOrYaw) && Object.keys(mcUtils.directionToYaw).includes(directionOrYaw);
@@ -751,10 +774,16 @@ exports.commands.commands.look = async (directionOrYaw, pitchOrForce, force) => 
         info(translatable_js_1.currentLang.data.commands.look.usage);
         return;
     }
-    await mcUtils.look(yaw, pitch, force);
-    success(`Set ${yaw !== undefined ? `Yaw to ${yaw}` : ''}` +
-        `${yaw !== undefined && pitch !== undefined ? ' and ' : ''}` +
-        `${pitch !== undefined ? `Pitch to ${pitch}` : ''}`);
+    try {
+        logger.debugging(`Value: ${pitch}`);
+        await mcUtils.look(yaw, pitch, force);
+        success(`Set ${yaw !== undefined ? `yaw (rotation to left/right) to ${yaw}` : ''}` +
+            `${yaw !== undefined && pitch !== undefined ? ' and ' : ''}` +
+            `${pitch !== undefined ? `pitch (up and down rotation) to ${pitch}` : ''}`);
+    }
+    catch (err) {
+        logger.debugging(`Exception occured: ${err}`);
+    }
 };
 exports.commands.commands.lookAt = (playerName, maxReach, minReach = maxReach, force) => {
     if (!playerName || maxReach <= 0 || maxReach <= minReach) {

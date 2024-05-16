@@ -103,7 +103,8 @@
 	"include": [
 		"src/*",
 		"src/init/setOpts.ts",
-		"src/builtin_plugins/*"
+		"src/builtin_plugins/*",
+		"src/lib/helpers/debugging.ts"
 	],
 	"exclude": [
 		"package.json"

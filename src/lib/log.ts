@@ -38,21 +38,37 @@ warn.color = color.reset + color.bold + color.rgb(255, 255, 85);
 
 let sleeping: boolean = false;
 export const debugging = (str: string, resetCursor = true, overrideSleep = false): void => {
-	if (sleeping = true) {
-		return
-	};
-	else {
+	increase_debug_success_count();
+	if (sleeping) {
+		increase_debug_attempt_count();
+		return;
+	} else if (debugcount === 1) {
+		increase_debug_attempt_count();
+		return;
+	} else {
 		const coloredStr = str.replace(/%COLOR%/g, debugging.color);
 		print(
 			`${debugging.color}[${currentLang.data.logger.debug}] ${padNewLines(coloredStr, 7, debugging.color) + color.reset}`,
 			{ resetCursor, clearLine: true }
 		);
 		sleeping = true;
-		sleep(2000);
+		void sleep(2000);
 		sleeping = false;
 	}
+	debugcount = 0;
 };
 debugging.color = color.reset + color.bold + color.rgb(212, 175, 55);
+
+export let debugcount: number = 0;
+export let debugattempts: number = 0;
+
+function increase_debug_attempt_count () {
+	debugattempts = debugattempts + 1;
+}
+
+function increase_debug_success_count () {
+	debugcount = debugcount + 1;
+}
 
 async function sleep (ms: number) {
 	return await new Promise((resolve) => setTimeout(resolve, ms));

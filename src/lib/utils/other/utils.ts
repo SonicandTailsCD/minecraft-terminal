@@ -3,7 +3,6 @@ import { escapeRegExp as escapeRegex } from '../strings/index.js';
 import { isPlainObject } from 'merge';
 import { isNumber } from '../numbers/isNumber.js';
 import * as logger from '../../log.js';
-import { stringify } from 'querystring';
 
 /**
  * The parseVar function takes a string and replaces all instances of variables with their values.

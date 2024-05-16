@@ -64,10 +64,10 @@ function toLowerCaseArr(arr) {
 exports.toLowerCaseArr = toLowerCaseArr;
 function matchEq(str, valObj) {
     let strCopy = String(str.valueOf());
-    logger.debugging(strCopy, true);
+    logger.debugging(strCopy, true, false);
     const matches = str.split(/[&|]/);
     const matchesStr = matches.toString();
-    logger.debugging(matchesStr, true);
+    logger.debugging(matchesStr, true, false);
     for (let i = 0; i < matches?.length; i++) {
         const mat = matches[i];
         const op = mat.match(/=|!=/)?.[0] ?? '';

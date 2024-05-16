@@ -72,33 +72,33 @@ export class Lang {
 				loading: 'Loading...',
 				connection: 'Connecting...',
 				loggingIn: 'Logging in...',
-				loggedIn: 'Logged in'
+				loggedIn: 'Connected'
 			},
 			commands: {
 				exit: {
-					description: 'Disconnect from the server',
+					description: 'Gracefully log off',
 					usage: undefined
 				},
 				reco: {
-					description: 'Reconnect to server',
+					description: 'Reconnect to the same server',
 					usage: undefined
 				},
 				send: {
-					description: 'Send a message in chat',
-					usage: 'Usage: send [message goes here]'
+					description: 'Send a message in chat (or just type your message without .send)',
+					usage: 'Usage: .send [message goes here]'
 
 				},
 				position: {
-					description: 'Show current position',
+					description: "Output bot's current position",
 					usage: undefined
 				},
 				distance: {
 					description: 'Show the distance between two points',
-					usage: 'Usage: distance <X1> <Y1> <Z1> <X2> <Y2> <Z2>'
+					usage: 'Usage: .distance <X1> <Y1> <Z1> <X2> <Y2> <Z2>'
 
 				},
 				list: {
-					description: 'List players connected to the server and their ping',
+					description: 'List all players connected to this server and their ping',
 					usage: undefined
 
 				},
@@ -113,23 +113,23 @@ export class Lang {
 
 				},
 				stopDig: {
-					description: 'Stop digging',
+					description: 'Stop digging immediately',
 					usage: undefined
 				},
 				digMap: {
-					description: 'A map where the bot always tries digging the blocks inside it',
+					description: 'Make an invisible cube (only bot sees this) where the bot always tries digging the blocks inside it',
 					usage: 'Usage: digMap <Action: add|remove|clear|addspace|show>',
 					subCommands: {
 						add: {
-							description: 'Add a block\'s coordinates',
+							description: "Add a block's coordinates",
 							usage: 'Usage: digMap.add <X> <Y> <Z>'
 						},
 						addspace: {
-							description: 'Add all block\'s in inside the coordinates',
+							description: "Add all block's in inside the coordinates",
 							usage: 'Usage: digMap.add <X1> <Y1> <Z1> <X2> <Y2> <Z2>'
 						},
 						remove: {
-							description: 'Remove a block\'s coordinates',
+							description: "Remove a block's coordinates",
 							usage: 'Usage: digMap.remove <X> <Y> <Z>'
 						},
 						clear: {
@@ -279,18 +279,18 @@ export class Lang {
 				botMovingErr: 'Cannot use this command while this bot is moving.',
 				botLookingOrAttackingErr: 'Cannot use this command while bot is attacking/looking at something.',
 				connectErr: "Couldn't connect to server.",
-				death: 'Bot died. Respawning...',
+				death: 'Bot died!',
 				invalidCmd (cmd) {
 					return `'${cmd}' isn't a valid command :(`;
 				},
-				nonVanillaCmd: 'This command uses some non-vanilla features to work which may get you banned on some servers. You can enable it in the configuration!\nType \"mc-term --get-conf-path\" to get the location of the config file :)',
+				nonVanillaCmd: 'This command makes the bot use some advanced (non-vanilla) features to work which will get you banned on some servers. You can enable it in the configuration, type "mc-term --get-conf-path" to get the location of your config file, then paste it inside your preferred file explorer. :)',
 				scriptOnlyCmd: 'This command can only be used inside scripts',
 				cantDigBlockAt (x, y, z, err) {
 					return `Bot cannot dig block at ${x}, ${y}, ${z}.\n${(err).message}`;
 				},
-				alreadyRunning: 'The command\'s already been triggered, dumbshit! :P',
+				alreadyRunning: "The command's already been triggered, dumbshit! :P",
 				alreadyRunningNoSwears: 'Command already triggered :(',
-				alreadyBlockThere: 'There\'s already a block there',
+				alreadyBlockThere: "There's already a block there",
 				blockPlaceAdjErr: 'There should be a block right next to where you would place the block bro, otherwise you can get banned',
 				yawPitchMaxErr: 'Yaw or Pitch cannot be more than 90 degrees',
 				yawPitchMinErr: 'Yaw or Pitch cannot be less than -90 degrees',

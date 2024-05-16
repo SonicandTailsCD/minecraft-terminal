@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.highLight1 = exports.success = exports.debugError = exports.error = exports.debugging = exports.warn = exports.info = exports.setup = void 0;
+exports.highLight1 = exports.success = exports.debugError = exports.error = exports.debugattempts = exports.debugcount = exports.debugging = exports.warn = exports.info = exports.setup = void 0;
 const easy_ansi_1 = require("easy-ansi");
 const translatable_js_1 = require("../lang/translatable.js");
 const basic_chat_cli_1 = require("basic-chat-cli");
@@ -30,19 +30,35 @@ const warn = (str, resetCursor = true) => {
 exports.warn = warn;
 exports.warn.color = easy_ansi_1.color.reset + easy_ansi_1.color.bold + easy_ansi_1.color.rgb(255, 255, 85);
 let sleeping = false;
-const debugging = (str, resetCursor = true) => {
-    if (sleeping = true)
+const debugging = (str, resetCursor = true, overrideSleep = false) => {
+    increase_debug_success_count();
+    if (sleeping) {
+        increase_debug_attempt_count();
         return;
+    }
+    else if (exports.debugcount === 1) {
+        increase_debug_attempt_count();
+        return;
+    }
     else {
         const coloredStr = str.replace(/%COLOR%/g, exports.debugging.color);
         print(`${exports.debugging.color}[${translatable_js_1.currentLang.data.logger.debug}] ${padNewLines(coloredStr, 7, exports.debugging.color) + easy_ansi_1.color.reset}`, { resetCursor, clearLine: true });
         sleeping = true;
-        sleep(2000);
+        void sleep(2000);
         sleeping = false;
     }
+    exports.debugcount = 0;
 };
 exports.debugging = debugging;
 exports.debugging.color = easy_ansi_1.color.reset + easy_ansi_1.color.bold + easy_ansi_1.color.rgb(212, 175, 55);
+exports.debugcount = 0;
+exports.debugattempts = 0;
+function increase_debug_attempt_count() {
+    exports.debugattempts = exports.debugattempts + 1;
+}
+function increase_debug_success_count() {
+    exports.debugcount = exports.debugcount + 1;
+}
 async function sleep(ms) {
     return await new Promise((resolve) => setTimeout(resolve, ms));
 }

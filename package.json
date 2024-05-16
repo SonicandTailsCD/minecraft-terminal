@@ -47,7 +47,9 @@
 		"pkg": "npm run build; pkg . --compress Brotli --options='max-semi-space-size=128,max-old-space-size=300'",
 		"prepublishOnly": "npm run build",
 		"windows-run": "node dist/index.js",
-		"linux-run": "node ./dist/index.js"
+		"linux-run": "node ./dist/index.js",
+		"compile": "eslint . --fix; tsc",
+		"no-eslint-compile": "tsc"
 	},
 	"pkg": {
 		"scripts": [
@@ -83,7 +85,7 @@
 		"vec3": "^0.1.10"
 	},
 	"devDependencies": {
-		"@types/node": "^20.11.5",
+		"@types/node": "^20.12.7",
 		"@types/shelljs": "^0.8.15",
 		"@typescript-eslint/eslint-plugin": "^6.19.0",
 		"@typescript-eslint/parser": "^6.19.0",

@@ -1,5 +1,5 @@
 // @ts-nocheck
-
+import { nothing } from './lib/helpers/debugging';
 import { parseStr, parseVar, matchEq, toLowerCaseArr } from './utils/other/utils.js';
 import { type Bot, type BotEvents, type BotOptions } from 'mineflayer';
 import * as mcUtils from './utils/other/mineflayer-utils.js';
@@ -109,6 +109,9 @@ interface Tmp {
 	botLooking: boolean
 	botAttacking: boolean
 	botDigging: boolean
+	Debugging: {
+		triggered: boolean
+	}
 }
 
 class Commands {
@@ -117,7 +120,10 @@ class Commands {
 		botMoving: false,
 		botLooking: false,
 		botAttacking: false,
-		botDigging: false
+		botDigging: false,
+		Debugging: {
+			triggered: false
+		}
 	};
 
 	public commands: Command = {};
@@ -628,7 +634,7 @@ commands.commands.move = async (direction: string, distance: number) => {
 };
 
 async function botFollow (matchesStr, range): Promise<void> {
-	if (commands.tmp.botMoving) {
+	if (this.tmp.botMoving) {
 		return;
 	}
 
@@ -740,24 +746,31 @@ commands.commands.control = (control: 'up' | 'forward' | 'back' | 'left' | 'righ
 	if (['forward', 'back', 'left', 'right', 'jump', 'sprint', 'sneak'].includes(control) && typeof state === 'boolean') {
 		bot.setControlState(control, state);
 		success(`Set control state ${control} to ${String(state)}`);
-		return;
-	}
-
-	if (control === 'clearall') {
+	} else if (control === 'clearall') {
 		bot.clearControlStates();
 		success('Cleared all control states');
-		return;
+	} else {
+		try {
+			logger.debugging(`That's not an input, silly! You expect the bot to go ${control} or what? :)`);
+			info(getCmdInfo('control'));
+		} catch (err) {
+			error(`Exception occured: ${err}`);
+		}
 	}
-
-	info(getCmdInfo('control'));
 };
 
 async function botSmartFollow (matchesStr, range): Promise<void> {
+	logger.debugging('Still working!');
 	if (!matchesStr || !range) {
 		return;
 	}
-
 	matchEq(matchesStr, {});
+	if (commands.tmp.Debugging.triggered) void nothing();
+	else {
+		logger.debugging(`Matches: ${matchEq(matchesStr, {})}`, true, false);
+		commands.tmp.Debugging.triggered = true;
+		void nothing();
+	}
 
 	while (commands.tmp.botMoving) {
 		const entity = bot.nearestEntity((entity) => {
@@ -771,17 +784,22 @@ async function botSmartFollow (matchesStr, range): Promise<void> {
 		}
 		const dist = distance(bot.entity.position, entity.position) - 0.67;
 		if (dist < range) {
-			await sleep(150);
+			await sleep(500);
 			continue;
 		}
 		const goal = new goals.GoalFollow(entity, range);
 		try {
 			await bot.pathfinder.goto(goal);
 		} catch {
-			await sleep(1400);
+			await sleep(3000);
 		}
 	}
+	void commands.commands.revertDebugValues();
 }
+commands.commands.revertDebugValues = function (): Promise<void> {
+	sleep(3000);
+	commands.tmp.Debugging.triggered = false;
+};
 
 commands.commands.smartFollow = async (matchesStr: string, range: number) => {
 	if (commands.tmp.botMoving) {
@@ -846,7 +864,7 @@ commands.commands.attack = (matchesStr: string, cps: number, reach: number, minr
 
 	commands.tmp.botLooking = true;
 	commands.tmp.botAttacking = true;
-	success(`Attacking nearest entity with ${cps}CPS if ${matchesStr} and MinReach(${minreach}) < distance < MaxReach(${reach})`);
+	success(`Attacking nearest entity with ${cps}CPS if ${matchesStr} and if the entity is as close as ${minreach} blocks and within range of ${reach}`);
 
 	const yaw = bot.entity.yaw;
 	const pitch = bot.entity.pitch;
@@ -882,12 +900,12 @@ commands.commands.attack = (matchesStr: string, cps: number, reach: number, minr
 
 commands.commands.stopAttack = () => {
 	if (commands.tmp.botLooking && !commands.tmp.botAttacking) {
-		warn('Cannot use ".stopattack" because player is looking at someone\nConsider ".stoplook"');
+		warn('Cannot use ".stopattack" as bot is looking at something. Use ".stoplook" instead :)');
 		return;
 	}
 	commands.tmp.botAttacking = false;
 	commands.tmp.botLooking = false;
-	success('Not attacking anyone');
+	success('Stopped attacking');
 };
 
 commands.commands.look = async (directionOrYaw: string | number, pitchOrForce?: number | boolean, force?: boolean) => {
@@ -900,13 +918,17 @@ commands.commands.look = async (directionOrYaw: string | number, pitchOrForce?: 
 		info(currentLang.data.commands.look.usage);
 		return;
 	}
-
-	await mcUtils.look(yaw, pitch, force);
-	success(
-		`Set ${yaw !== undefined ? `Yaw to ${yaw}` : ''}` +
-		`${yaw !== undefined && pitch !== undefined ? ' and ' : ''}` +
-		`${pitch !== undefined ? `Pitch to ${pitch}` : ''}`
-	);
+	try {
+		logger.debugging(`Value: ${pitch}`);
+		await mcUtils.look(yaw, pitch, force);
+		success(
+			`Set ${yaw !== undefined ? `yaw (rotation to left/right) to ${yaw}` : ''}` +
+			`${yaw !== undefined && pitch !== undefined ? ' and ' : ''}` +
+			`${pitch !== undefined ? `pitch (up and down rotation) to ${pitch}` : ''}`
+		);
+	} catch (err) {
+		logger.debugging(`Exception occured: ${err}`);
+	}
 };
 
 commands.commands.lookAt = (playerName: string, maxReach: number, minReach: number = maxReach, force: boolean) => {

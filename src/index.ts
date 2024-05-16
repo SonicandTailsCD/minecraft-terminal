@@ -9,7 +9,7 @@ import { setOpts } from './init/setOpts.js';
 const settings = new Settings();
 setOpts(settings);
 
-import { info, error, setup as loggerSetup } from './lib/log.js';
+import { info, error, debugging, setup as loggerSetup } from './lib/log.js';
 
 info('Loading...', false);
 
@@ -39,6 +39,7 @@ import { makeChat } from './init/makeChat.js';
 import { commands } from './lib/commands.js';
 import type { Chat } from 'basic-chat-cli';
 import { join } from 'path';
+import { EventEmitter } from 'stream';
 
 overrideCred(settings);
 uncaughtExcep(settings);
