@@ -35,7 +35,7 @@ export function setup (CHAT: Chat, SETTINGS: Settings): void {
 }
 
 function connectErr (err: Error): void {
-	logger.error(currentLang.data.infoMessages.connectErr + '\n' + err.message);
+	logger.error(currentLang.data.infoMessages.connectErr + '\n' + err?.message);
 	process.exit(1);
 }
 

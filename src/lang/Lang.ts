@@ -43,7 +43,7 @@ export class Lang {
 			scriptOnlyCmd: string
 			cantDigBlockAt: (x: number | string, y: number | string, z: number | string, err: Error) => string
 			alreadyRunning: string
-			alreadyRunningNoSwears: string
+			alreadyRunningNSFW: string
 			alreadyBlockThere: string
 			blockPlaceAdjErr: string
 			yawPitchMaxErr: string
@@ -62,16 +62,16 @@ export class Lang {
 				success: 'OK'
 			},
 			login: {
-				auth: 'Auth: ',
-				username: 'Login: ',
+				auth: 'Authentication method: ',
+				username: 'Username: ',
 				password: 'Password: ',
 				serverIP: 'Server: ',
-				MCVersion: 'Version: '
+				MCVersion: 'Version of your server: '
 			},
 			misc: {
 				loading: 'Loading...',
 				connection: 'Connecting...',
-				loggingIn: 'Logging in...',
+				loggingIn: 'Logging in and loading world...',
 				loggedIn: 'Connected'
 			},
 			commands: {
@@ -276,9 +276,9 @@ export class Lang {
 				}
 			},
 			infoMessages: {
-				botMovingErr: 'Cannot use this command while this bot is moving.',
-				botLookingOrAttackingErr: 'Cannot use this command while bot is attacking/looking at something.',
-				connectErr: "Couldn't connect to server.",
+				botMovingErr: "Cannot use this command while the bot's moving.",
+				botLookingOrAttackingErr: 'Cannot use this command while bot is attacking or looking at something.',
+				connectErr: "Couldn't connect to the server.",
 				death: 'Bot died!',
 				invalidCmd (cmd) {
 					return `'${cmd}' isn't a valid command :(`;
@@ -288,8 +288,8 @@ export class Lang {
 				cantDigBlockAt (x, y, z, err) {
 					return `Bot cannot dig block at ${x}, ${y}, ${z}.\n${(err).message}`;
 				},
-				alreadyRunning: "The command's already been triggered, dumbshit! :P",
-				alreadyRunningNoSwears: 'Command already triggered :(',
+				alreadyRunningNSFW: "The command's already been triggered, dumbshit! :P",
+				alreadyRunning: 'Command already triggered :(',
 				alreadyBlockThere: "There's already a block there",
 				blockPlaceAdjErr: 'There should be a block right next to where you would place the block bro, otherwise you can get banned',
 				yawPitchMaxErr: 'Yaw or Pitch cannot be more than 90 degrees',
