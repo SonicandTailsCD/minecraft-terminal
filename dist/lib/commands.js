@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PluginExports = exports.PluginExportsBefore = exports.setbotMain = exports.setBot = exports.bot = exports.commands = exports.nonVanillaCommands = exports.scriptOnlyCommands = exports.reservedCommandNames = exports.setConfig = exports.success = exports.error = exports.warn = exports.info = exports.print = exports.events = void 0;
 const tslib_1 = require("tslib");
-const debugging_1 = require("./lib/helpers/debugging");
+const debugging_js_1 = require("./helpers/debugging.js");
 const utils_js_1 = require("./utils/other/utils.js");
 const mcUtils = tslib_1.__importStar(require("./utils/other/mineflayer-utils.js"));
 const parseCoords_js_1 = require("./utils/strings/parseCoords.js");
@@ -639,11 +639,11 @@ async function botSmartFollow(matchesStr, range) {
     }
     (0, utils_js_1.matchEq)(matchesStr, {});
     if (exports.commands.tmp.Debugging.triggered)
-        void (0, debugging_1.nothing)();
+        void (0, debugging_js_1.nothing)();
     else {
         logger.debugging(`Matches: ${(0, utils_js_1.matchEq)(matchesStr, {})}`, true, false);
         exports.commands.tmp.Debugging.triggered = true;
-        void (0, debugging_1.nothing)();
+        void (0, debugging_js_1.nothing)();
     }
     while (exports.commands.tmp.botMoving) {
         const entity = exports.bot.nearestEntity((entity) => {

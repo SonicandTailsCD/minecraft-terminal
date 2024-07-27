@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { nothing } from './lib/helpers/debugging';
+import { nothing } from './helpers/debugging.js'
 import { parseStr, parseVar, matchEq, toLowerCaseArr } from './utils/other/utils.js';
 import { type Bot, type BotEvents, type BotOptions } from 'mineflayer';
 import * as mcUtils from './utils/other/mineflayer-utils.js';

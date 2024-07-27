@@ -29,7 +29,7 @@ function setup(CHAT, SETTINGS) {
 }
 exports.setup = setup;
 function connectErr(err) {
-    logger.error(translatable_js_1.currentLang.data.infoMessages.connectErr + '\n' + err.message);
+    logger.error(translatable_js_1.currentLang.data.infoMessages.connectErr + '\n' + err?.message);
     process.exit(1);
 }
 function getCommandPrompt(name, server) {
